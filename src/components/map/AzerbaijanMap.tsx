@@ -51,14 +51,18 @@ function PhotoGallery({ photos }: { photos: Location["photos"] }) {
   const prev = () => { setLoaded(false); setErrored(false); setIdx((i) => (i - 1 + photos.length) % photos.length); };
   const next = useCallback(() => { setLoaded(false); setErrored(false); setIdx((i) => (i + 1) % photos.length); }, [photos.length]);
 
-  // auto-advance every 5 s when not hovered
+  // reset idx when photo list changes (switching locations)
+  useEffect(() => { setIdx(0); setLoaded(false); setErrored(false); }, [photos]);
+
+  // auto-advance every 5 s
   useEffect(() => {
     const t = setTimeout(next, 5000);
     return () => clearTimeout(t);
   }, [idx, next]);
 
   if (!photos.length) return null;
-  const photo = photos[idx];
+  const photo = photos[Math.min(idx, photos.length - 1)];
+  if (!photo) return null;
 
   return (
     <div className="mb-4">
@@ -300,6 +304,13 @@ export default function AzerbaijanMap({ activeTypes }: Props) {
             </div>
 
             {/* Visit info */}
+            {selected.price && (
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-3">
+                <span className="text-amber-800 text-sm font-semibold">Qiymət</span>
+                <span className="text-amber-700 text-base font-bold">{selected.price}</span>
+              </div>
+            )}
+
             <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-200">
               <div className="flex items-start gap-2 mb-2">
                 <Clock size={14} className="text-green-600 mt-0.5" />
