@@ -12,8 +12,8 @@
   --color-text-light: #0D3D52;
   --color-muted: #7AABB8;
 
-  --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-serif: Helvetica, Arial, sans-serif;
+  --font-sans: Helvetica, Arial, sans-serif;
 
   --shadow-card: 0 8px 32px rgba(26, 104, 142, 0.15);
   --shadow-card-hover: 0 16px 48px rgba(26, 104, 142, 0.25);

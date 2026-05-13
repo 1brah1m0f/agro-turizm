@@ -21,9 +21,14 @@ async function main() {
 
   const adminPassword = await bcrypt.hash("admin123", 10);
   const userPassword = await bcrypt.hash("password123", 10);
+  const verifiedEntrepreneurPassword = await bcrypt.hash("Kanon005@", 10);
 
   const admin = await prisma.user.create({
     data: { email: "admin@farmorfx.az", password: adminPassword, role: "ADMIN", name: "Admin" },
+  });
+
+  const entrepreneurFermer = await prisma.user.create({
+    data: { email: "fermer@gmail.com", password: verifiedEntrepreneurPassword, role: "ENTREPRENEUR", name: "Fermer" },
   });
 
   const entrepreneurVerified = await prisma.user.create({
@@ -55,6 +60,19 @@ async function main() {
       location: "Seki",
       description: "Uzum yigimi ve yerli dadlar.",
       logoUrl: "https://picsum.photos/seed/seki/200",
+      isVerified: true,
+    },
+  });
+
+  const fermerProfile = await prisma.entrepreneurProfile.create({
+    data: {
+      userId: entrepreneurFermer.id,
+      businessName: "Fermer Teserrufati",
+      phone: "+994501998877",
+      category: "Ferma",
+      location: "Goygol",
+      description: "Ekoloji ferma turlari ve dadim.",
+      logoUrl: "https://picsum.photos/seed/fermer/200",
       isVerified: true,
     },
   });
@@ -140,6 +158,21 @@ async function main() {
         depositAmount: 15,
         tourDuration: 60,
         amenities: ["mueallim", "tehlukesizlik"],
+        status: "APPROVED",
+      },
+      {
+        entrepreneurProfileId: fermerProfile.id,
+        name: "Goygol Ferma Gezintisi",
+        description: "Ferma turu, heyvanlar ve yerli dadimlar.",
+        category: "Ferma",
+        address: "Goygol, Azerbaijan",
+        lat: 40.585,
+        lng: 46.319,
+        photos: ["https://picsum.photos/seed/goygol/800/600"],
+        price: 40,
+        depositAmount: 12,
+        tourDuration: 90,
+        amenities: ["bələdçi", "dadım"],
         status: "APPROVED",
       },
       {

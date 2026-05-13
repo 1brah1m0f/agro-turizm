@@ -211,8 +211,8 @@ function DetailPanel({ location, routeInfo, userHasLocation, onClose }: {
   );
 }
 
-function MapLayer({ activeTypes, selectedTour, selectedLocation, onLocationSelect, userLocation, onRouteInfo, onRegionCard }: {
-  activeTypes: LocationType[]; selectedTour: Tour | null; selectedLocation: Location | null;
+function MapLayer({ locations, activeTypes, selectedTour, selectedLocation, onLocationSelect, userLocation, onRouteInfo, onRegionCard }: {
+  locations: Location[]; activeTypes: LocationType[]; selectedTour: Tour | null; selectedLocation: Location | null;
   onLocationSelect: (l: Location | null) => void; userLocation: { lat: number; lng: number } | null;
   onRouteInfo: (r: { distance: string; duration: string } | null) => void;
   onRegionCard: (c: { name: string; distKm: number } | null) => void;
@@ -325,7 +325,7 @@ function MapLayer({ activeTypes, selectedTour, selectedLocation, onLocationSelec
     if (selectedTour) return;
 
     const markers: google.maps.marker.AdvancedMarkerElement[] = [];
-    LOCATIONS.filter(l => activeTypes.includes(l.type)).forEach(loc => {
+    locations.filter(l => activeTypes.includes(l.type)).forEach(loc => {
       const isSel = selectedLocation?.id === loc.id;
       const el = makePinEl(loc.type, isSel);
       const mk = new google.maps.marker.AdvancedMarkerElement({ position: { lat: loc.lat, lng: loc.lng }, map, content: el, title: loc.name, zIndex: isSel ? 999 : 1 });
@@ -351,9 +351,9 @@ function MapLayer({ activeTypes, selectedTour, selectedLocation, onLocationSelec
   return null;
 }
 
-interface Props { activeTypes: LocationType[]; selectedTour: Tour | null; selectedLocation: Location | null; onLocationSelect: (loc: Location | null) => void; }
+interface Props { locations: Location[]; activeTypes: LocationType[]; selectedTour: Tour | null; selectedLocation: Location | null; onLocationSelect: (loc: Location | null) => void; }
 
-export default function GoogleAzerbaijanMap({ activeTypes, selectedTour, selectedLocation, onLocationSelect }: Props) {
+export default function GoogleAzerbaijanMap({ locations, activeTypes, selectedTour, selectedLocation, onLocationSelect }: Props) {
   const apiKey = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "").trim();
   const mapId  = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID ?? "").trim() || undefined;
   const [routeInfo,    setRouteInfo]    = useState<{ distance: string; duration: string } | null>(null);
@@ -390,6 +390,7 @@ export default function GoogleAzerbaijanMap({ activeTypes, selectedTour, selecte
           styles={mapId ? undefined : MAP_STYLES} disableDefaultUI gestureHandling="greedy"
           className="w-full h-full">
           <MapLayer
+            locations={locations}
             activeTypes={activeTypes} selectedTour={selectedTour}
             selectedLocation={selectedLocation} onLocationSelect={onLocationSelect}
             userLocation={userLocation} onRouteInfo={setRouteInfo} onRegionCard={setRegionCard}

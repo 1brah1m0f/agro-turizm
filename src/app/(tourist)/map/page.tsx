@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search, Heart, CalendarCheck, Map, Route, Star, Users,
@@ -53,6 +53,23 @@ const QUICK_NAV = [
 
 const ALL_TYPES = Object.keys(TYPE_META) as LocationType[];
 
+const categoryToType = (category?: string): LocationType => {
+  const value = (category ?? "").toLowerCase();
+  if (value.includes("balıq")) return "fish";
+  if (value.includes("kamp")) return "lakeside";
+  if (value.includes("at")) return "animal";
+  if (value.includes("arı")) return "beekeeping";
+  if (value.includes("üzüm") || value.includes("sərab") || value.includes("sarab")) return "vineyard";
+  return "farm";
+};
+
+const splitAddress = (address?: string, fallback?: string) => {
+  const parts = (address ?? "").split(",").map((p) => p.trim()).filter(Boolean);
+  const village = parts[0] || fallback || "Azerbaijan";
+  const region = parts[1] || fallback || "Azerbaijan";
+  return { village, region };
+};
+
 export default function MapPage() {
   const router = useRouter();
 
@@ -62,6 +79,46 @@ export default function MapPage() {
   const [activeTypes,     setActiveTypes]     = useState<LocationType[]>([...ALL_TYPES]);
   const [filterOpen,      setFilterOpen]      = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [dbLocations, setDbLocations] = useState<Location[]>([]);
+
+  useEffect(() => {
+    fetch("/api/places")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return;
+        const mapped: Location[] = data
+          .filter((p) => typeof p?.lat === "number" && typeof p?.lng === "number")
+          .map((p) => {
+            const type = categoryToType(p.category);
+            const meta = TYPE_META[type];
+            const { village, region } = splitAddress(p.address, p.entrepreneur?.location);
+            return {
+              id: `db-${p.id}`,
+              name: p.name ?? "Məkan",
+              type,
+              region,
+              village,
+              lat: p.lat,
+              lng: p.lng,
+              description: p.description ?? "",
+              activities: [],
+              products: [],
+              visitInfo: "Əvvəlcədən rezervasiya",
+              price: p.price ? `₼${p.price}` : undefined,
+              contact: undefined,
+              emoji: meta.emoji,
+              color: meta.color,
+              photos: Array.isArray(p.photos)
+                ? p.photos.map((url: string) => ({ url, caption: p.name ?? "" }))
+                : [],
+            } as Location;
+          });
+        setDbLocations(mapped);
+      })
+      .catch(() => setDbLocations([]));
+  }, []);
+
+  const allLocations = useMemo(() => [...LOCATIONS, ...dbLocations], [dbLocations]);
 
   const toggleType = (t: LocationType) =>
     setActiveTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
@@ -86,7 +143,7 @@ export default function MapPage() {
   }, []);
 
   const showPanel = activeTab === "turlar";
-  const activeCount = LOCATIONS.filter(l => activeTypes.includes(l.type)).length;
+  const activeCount = allLocations.filter(l => activeTypes.includes(l.type)).length;
 
   return (
     <div className="fixed inset-0 z-50 flex bg-white">
@@ -223,6 +280,7 @@ export default function MapPage() {
 
         {/* Google Maps */}
         <GoogleAzerbaijanMap
+          locations={allLocations}
           activeTypes={activeTypes}
           selectedTour={selectedTour}
           selectedLocation={selectedLocation}
