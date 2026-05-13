@@ -107,82 +107,84 @@ export default function EntrepreneurDashboard() {
   const maxCount = Math.max(...weekCounts, 1);
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="font-serif text-2xl font-bold text-text-dark">İdarə Paneli</h1>
+    <div className="p-6 pt-16 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between mb-10">
+        <h1 className="font-serif text-3xl font-bold text-text-dark">İdarə Paneli</h1>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-12"><Spinner /></div>
       ) : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {metrics.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="bg-card rounded-xl p-4 shadow-card border border-accent/10">
-                <div className="flex items-center justify-between mb-2">
-                  <Icon size={18} className="text-accent" />
+          <div className="mb-10">
+            <h2 className="text-lg font-semibold text-text-light mb-4 flex items-center gap-2">
+              <TrendingUp size={20} className="text-accent" />
+              Ümumi Statistika
+            </h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {metrics.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="bg-card rounded-xl p-5 shadow-card border border-accent/10 transition-transform hover:scale-105">
+                  <div className="flex items-center justify-between mb-3">
+                    <Icon size={20} className="text-accent" />
+                  </div>
+                  <p className="font-serif font-bold text-3xl text-text-light mb-1">{value}</p>
+                  <p className="text-muted text-xs font-medium uppercase tracking-wider">{label}</p>
                 </div>
-                <p className="font-serif font-bold text-2xl text-text-light mb-0.5">{value}</p>
-                <p className="text-muted text-xs">{label}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-card rounded-xl p-5 shadow-card border border-accent/10">
-              <h2 className="font-semibold text-text-light mb-3">Həftəlik Bronlar</h2>
-              {/* count labels */}
-              <div className="flex gap-2 mb-1 h-4">
-                {weekCounts.map((count, i) => (
-                  <div key={i} className="flex-1 text-center text-[9px] text-accent font-semibold">
-                    {count > 0 ? count : ""}
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-card rounded-xl p-6 shadow-card border border-accent/10">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-bold text-text-light text-lg">Həftəlik Bron Analitikası</h2>
+                <Badge variant="accent" className="text-[10px]">Canlı</Badge>
               </div>
-              {/* bars — direct flex children so items-end works correctly */}
-              <div className="flex gap-2 items-end h-24">
+              <div className="flex gap-2 items-end h-36">
                 {weekCounts.map((count, i) => {
-                  const h = count > 0 ? Math.max(6, Math.round((count / maxCount) * 88)) : 3;
+                  const h = count > 0 ? Math.max(6, Math.round((count / maxCount) * 110)) : 3;
                   return (
-                    <div key={i} className="flex-1 rounded-t-md bg-accent/15 relative overflow-hidden" style={{ height: `${h}px` }}>
-                      <div className="absolute bottom-0 inset-x-0 bg-gradient-main rounded-t-md" style={{ height: "60%" }} />
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+                      <div className="text-[10px] text-accent font-bold">{count}</div>
+                      <div className="w-full rounded-t-md bg-accent/15 relative overflow-hidden transition-all hover:bg-accent/20" style={{ height: `${h}px` }}>
+                        <div className="absolute bottom-0 inset-x-0 bg-gradient-main rounded-t-md" style={{ height: "60%" }} />
+                      </div>
                     </div>
                   );
                 })}
               </div>
-              {/* day labels */}
-              <div className="flex gap-2 mt-1.5">
+              <div className="flex gap-2 mt-3">
                 {barLabels.map((label, i) => (
-                  <div key={i} className="flex-1 text-center text-[10px] text-muted">{label}</div>
+                  <div key={i} className="flex-1 text-center text-[11px] text-muted font-medium">{label}</div>
                 ))}
               </div>
             </div>
 
-            <div className="bg-card rounded-xl p-5 shadow-card border border-accent/10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-text-light">Son Bronlar</h2>
-                <button onClick={() => router.push("/entrepreneur/bookings")} className="text-accent text-xs hover:underline">Hamısı →</button>
+            <div className="bg-card rounded-xl p-6 shadow-card border border-accent/10">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-bold text-text-light text-lg">Son Rezervasiyalar</h2>
+                <button onClick={() => router.push("/entrepreneur/bookings")} className="text-accent text-xs font-semibold hover:underline flex items-center gap-1">Hamısı →</button>
               </div>
               {recentBookings.length === 0 ? (
-                <p className="text-muted text-sm text-center py-6">Hələ bron yoxdur</p>
+                <p className="text-muted text-sm text-center py-10">Hələ bron yoxdur</p>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {recentBookings.map((b) => (
-                    <div key={b.id} className="flex items-center gap-3 py-2 border-b border-primary/10 last:border-0">
-                      <div className="w-9 h-9 rounded-full bg-gradient-main flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                    <div key={b.id} className="flex items-center gap-4 py-3 border-b border-primary/10 last:border-0 transition-colors hover:bg-primary/5 px-2 rounded-lg">
+                      <div className="w-10 h-10 rounded-full bg-gradient-main flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm">
                         {b.touristName[0]}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-text-light text-sm font-medium truncate">{b.touristName}</p>
+                        <p className="text-text-light text-sm font-bold truncate">{b.touristName}</p>
                         <p className="text-muted text-xs">{new Date(b.date).toLocaleDateString("az-AZ")} · {b.timeSlot}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-accent text-sm font-bold">₼{b.totalAmount}</p>
                         {b.status === "CONFIRMED"
-                          ? <Badge variant="accent" className="text-[9px] gap-0.5"><CheckCircle size={8} /> Təsdiqləndi</Badge>
+                          ? <Badge variant="accent" className="text-[9px] gap-0.5 font-bold"><CheckCircle size={8} /> Təsdiqləndi</Badge>
                           : b.status === "PENDING"
-                          ? <Badge variant="amber" className="text-[9px] gap-0.5"><Clock size={8} /> Gözlənilir</Badge>
-                          : <Badge variant="default" className="text-[9px]">{b.status}</Badge>}
+                          ? <Badge variant="amber" className="text-[9px] gap-0.5 font-bold"><Clock size={8} /> Gözlənilir</Badge>
+                          : <Badge variant="default" className="text-[9px] font-bold">{b.status}</Badge>}
                       </div>
                     </div>
                   ))}

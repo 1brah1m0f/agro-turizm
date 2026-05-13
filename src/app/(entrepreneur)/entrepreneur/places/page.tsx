@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Star, Eye, Edit2 } from "lucide-react";
+import { Plus, Star, Eye, Edit2, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
+import Toast from "@/components/ui/Toast";
 
 interface Place {
   id: string;
@@ -27,6 +28,7 @@ export default function EntrepreneurPlacesPage() {
   const router = useRouter();
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type?: "success" | "error" } | null>(null);
 
   useEffect(() => {
     fetch("/api/entrepreneur/places")
@@ -96,11 +98,28 @@ export default function EntrepreneurPlacesPage() {
                     <Edit2 size={13} /> Redaktə
                   </button>
                 </Link>
+                <button
+                  onClick={async () => {
+                    const url = `${window.location.origin}/place/${place.id}`;
+                    try {
+                      await navigator.clipboard.writeText(url);
+                      setToast({ message: "Paylaşma linki kopyalandı", type: "success" });
+                    } catch {
+                      setToast({ message: "Link kopyalana bilmədi", type: "error" });
+                    }
+                  }}
+                  className="flex items-center gap-1.5 text-xs text-muted border border-muted/20 rounded-lg px-3 py-2 hover:border-accent/40 hover:text-accent transition-colors">
+                  <Share2 size={13} /> Paylaş
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {toast ? (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      ) : null}
     </div>
   );
 }

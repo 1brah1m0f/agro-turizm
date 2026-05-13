@@ -21,6 +21,9 @@ export async function POST(req: Request) {
     const profile = await prisma.entrepreneurProfile.findUnique({ where: { userId: session.user.id } });
     if (!profile?.isVerified) return Response.json({ error: "Hesabınız hələ doğrulanmayıb" }, { status: 403 });
     const body = await req.json();
+    if (!body?.address || !body?.lat || !body?.lng) {
+      return Response.json({ error: "Ünvan xəritədə təsdiqlənməlidir" }, { status: 400 });
+    }
     const place = await prisma.place.create({ data: { ...body, entrepreneurProfileId: profile.id, status: "PENDING" } });
     return Response.json(place, { status: 201 });
   } catch {

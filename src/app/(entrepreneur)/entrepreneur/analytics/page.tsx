@@ -42,9 +42,10 @@ export default function AnalyticsPage() {
       {/* Revenue chart */}
       <div className="bg-card rounded-xl p-5 shadow-card border border-accent/10 mb-6">
         <h2 className="font-semibold text-text-light mb-4">İllik Qazanc (₼)</h2>
-        <div className="flex items-end gap-1 h-40 mb-2">
+        <div className="flex items-end gap-1 h-44 mb-2">
           {revenueData.map((val, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+            <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+              <div className="text-[10px] text-accent font-semibold">₼{val}</div>
               <div className="w-full rounded-t-sm bg-accent/10 relative overflow-hidden"
                 style={{ height: `${maxRevenue > 0 ? Math.max(4, Math.round((val / maxRevenue) * 152)) : 0}px` }}>
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-main rounded-t-sm" style={{ height: "70%" }} />
@@ -83,11 +84,14 @@ export default function AnalyticsPage() {
       {/* Monthly bookings chart */}
       <div className="bg-card rounded-xl p-5 shadow-card border border-accent/10">
         <h2 className="font-semibold text-text-light mb-4">Aylıq Bronlar</h2>
-        <div className="flex items-end gap-1 h-28 mb-2">
+        <div className="flex items-end gap-1 h-32 mb-2">
           {bookingData.map((val, i) => (
-            <div key={i} className="flex-1 rounded-t-sm bg-primary-dark/60 relative overflow-hidden"
-              style={{ height: `${Math.max(...bookingData) > 0 ? Math.max(4, Math.round((val / Math.max(...bookingData)) * 104)) : 0}px` }}>
-              <div className="absolute bottom-0 inset-x-0 bg-accent/60 rounded-t-sm" style={{ height: "60%" }} />
+            <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+              <div className="text-[10px] text-accent font-semibold">{val}</div>
+              <div className="w-full rounded-t-sm bg-primary-dark/60 relative overflow-hidden"
+                style={{ height: `${Math.max(...bookingData) > 0 ? Math.max(4, Math.round((val / Math.max(...bookingData)) * 104)) : 0}px` }}>
+                <div className="absolute bottom-0 inset-x-0 bg-accent/60 rounded-t-sm" style={{ height: "60%" }} />
+              </div>
             </div>
           ))}
         </div>
