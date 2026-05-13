@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { Home, Map, Search, CalendarCheck, Coins, User, Wheat } from "lucide-react";
+import { Home, Map, Search, CalendarCheck, Coins, Gift, User, Wheat } from "lucide-react";
 
 const items = [
-  { href: "/home", icon: Home, label: "Ana Səhifə" },
-  { href: "/map", icon: Map, label: "Xəritə" },
-  { href: "/explore", icon: Search, label: "Kəşf Et" },
+  { href: "/home",     icon: Home,         label: "Ana Səhifə" },
+  { href: "/map",      icon: Map,          label: "Xəritə" },
+  { href: "/explore",  icon: Search,       label: "Kəşf Et" },
   { href: "/bookings", icon: CalendarCheck, label: "Bronlarım" },
-  { href: "/coins", icon: Coins, label: "Koinlər" },
-  { href: "/profile", icon: User, label: "Profil" },
+  { href: "/coins",    icon: Coins,        label: "Koinlər" },
+  { href: "/rewards",  icon: Gift,         label: "Mükafatlar" },
+  { href: "/profile",  icon: User,         label: "Profil" },
 ];
 
 export default function TouristSidebar() {

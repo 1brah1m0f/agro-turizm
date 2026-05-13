@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Home, Map, CalendarCheck, User } from "lucide-react";
+import { Home, Map, Gift, CalendarCheck, User } from "lucide-react";
 
 const items = [
-  { href: "/home", icon: Home, label: "Ana" },
-  { href: "/map", icon: Map, label: "Xəritə" },
+  { href: "/home",     icon: Home,         label: "Ana" },
+  { href: "/map",      icon: Map,          label: "Xəritə" },
+  { href: "/rewards",  icon: Gift,         label: "Mükafat" },
   { href: "/bookings", icon: CalendarCheck, label: "Bronlar" },
-  { href: "/profile", icon: User, label: "Profil" },
+  { href: "/profile",  icon: User,         label: "Profil" },
 ];
 
 export default function TouristNav() {

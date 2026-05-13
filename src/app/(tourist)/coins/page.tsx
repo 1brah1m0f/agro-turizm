@@ -76,11 +76,16 @@ export default function CoinsPage() {
           </div>
         </div>
 
-        {/* Redeem */}
-        <div className="bg-card rounded-xl p-4 shadow-card border border-accent/10">
-          <h2 className="font-semibold text-text-light mb-1 text-sm">Koinlər nə ilə dəyişilir?</h2>
-          <p className="text-muted text-xs mb-3">100 koin = ₼1 endirim</p>
-          <Button variant="gradient" className="w-full" onClick={() => router.push("/explore")}>Mağazaya Get →</Button>
+        {/* Rewards CTA */}
+        <div className="bg-gradient-main rounded-xl p-5 shadow-card-hover relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-6 translate-x-6" />
+          <div className="relative">
+            <p className="text-white font-semibold mb-1">Koinlərinizi xərclə!</p>
+            <p className="text-white/70 text-xs mb-3">Şəki halvası, ipək şərfə, at minmə dərsi və daha çox...</p>
+            <Button variant="gradient" className="bg-white text-primary-dark hover:bg-white/90 border-0 w-full font-bold" onClick={() => router.push("/rewards")}>
+              🎁 Mükafatlara Bax →
+            </Button>
+          </div>
         </div>
 
         {/* How to earn */}
