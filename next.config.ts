@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.touryup.com" },
       { protocol: "https", hostname: "encrypted-tbn0.gstatic.com" },
       { protocol: "https", hostname: "lookaside.instagram.com" },
+      { protocol: "https", hostname: "scontent.fgyd4-2.fna.fbcdn.net" },
+      { protocol: "https", hostname: "scontent.fgyd21-1.fna.fbcdn.net" },
+      { protocol: "https", hostname: "*.fna.fbcdn.net" },
     ],
   },
 };
