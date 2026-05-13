@@ -135,6 +135,7 @@ export default function MapPage() {
                 if (tour) openTourDetail(tour);
                 else { setSelectedTour(null); }
               }}
+              onClose={() => setActiveTab("kesf")}
             />
           </div>
 

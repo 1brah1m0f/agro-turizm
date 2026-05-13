@@ -8,11 +8,12 @@ import { cn } from "@/lib/utils/cn";
 interface Props {
   selectedTour: Tour | null;
   onSelect: (tour: Tour | null) => void;
+  onClose?: () => void;
 }
 
 const FILTERS = ["Tarix", "Qiymət", "Tur növü", "TurAgent"];
 
-export default function TourListPanel({ selectedTour, onSelect }: Props) {
+export default function TourListPanel({ selectedTour, onSelect, onClose }: Props) {
   const [saved, setSaved] = useState<string[]>([]);
 
   const toggleSave = (id: string, e: React.MouseEvent) => {
@@ -24,8 +25,16 @@ export default function TourListPanel({ selectedTour, onSelect }: Props) {
     <div className="w-[370px] flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full overflow-hidden">
       {/* Header */}
       <div className="px-5 pt-5 pb-3 border-b border-gray-100">
-        <h2 className="font-bold text-gray-900 text-lg">Turlar</h2>
-        <p className="text-gray-500 text-xs mt-1 leading-relaxed">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="font-bold text-gray-900 text-lg">Turlar</h2>
+          {onClose && (
+            <button onClick={onClose}
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+              <X size={17} />
+            </button>
+          )}
+        </div>
+        <p className="text-gray-500 text-xs leading-relaxed">
           Seçdiyiniz ərazidə fəaliyyət göstərən TurAgentlər və onların xidmətləri
         </p>
       </div>
