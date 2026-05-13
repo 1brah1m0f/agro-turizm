@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  TOURIST
+  ENTREPRENEUR
+  ADMIN
+}
+
+enum PlaceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id                   String                 @id @default(cuid())
+  email                String                 @unique
+  password             String
+  role                 Role                   @default(TOURIST)
+  name                 String
+  createdAt            DateTime               @default(now())
+  touristProfile       TouristProfile?
+  entrepreneurProfile  EntrepreneurProfile?
+  bookings             Booking[]
+  reviews              Review[]
+  coinTransactions     CoinTransaction[]
+}
+
+model TouristProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  phone        String?
+  country      String?
+  interests    String[]
+  coinBalance  Int      @default(0)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EntrepreneurProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  businessName  String
+  phone         String
+  category      String
+  location      String
+  description   String?
+  logoUrl       String?
+  isVerified    Boolean  @default(false)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  places        Place[]
+}
+
+model Place {
+  id                     String       @id @default(cuid())
+  entrepreneurProfileId  String
+  name                   String
+  description            String
+  category               String
+  address                String
+  lat                    Float?
+  lng                    Float?
+  photos                 String[]
+  price                  Float
+  depositAmount          Float
+  tourDuration           Int
+  amenities              String[]
+  status                 PlaceStatus  @default(PENDING)
+  createdAt              DateTime     @default(now())
+  entrepreneur           EntrepreneurProfile @relation(fields: [entrepreneurProfileId], references: [id])
+  bookings               Booking[]
+  reviews                Review[]
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  userId           String
+  placeId          String
+  date             DateTime
+  timeSlot         String
+  participantCount Int
+  totalAmount      Float
+  depositAmount    Float
+  status           BookingStatus @default(PENDING)
+  qrCode           String        @default(cuid())
+  createdAt        DateTime      @default(now())
+  user             User          @relation(fields: [userId], references: [id])
+  place            Place         @relation(fields: [placeId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  rating    Int
+  body      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  place     Place    @relation(fields: [placeId], references: [id])
+}
+
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}

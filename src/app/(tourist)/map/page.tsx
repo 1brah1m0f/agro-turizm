@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, SlidersHorizontal, MapPin, Star, X, Plus, Minus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, SlidersHorizontal, Star, X, Plus, Minus } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
@@ -17,6 +18,7 @@ const mockPins = [
 ];
 
 export default function MapPage() {
+  const router = useRouter();
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedPin, setSelectedPin] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -71,7 +73,7 @@ export default function MapPage() {
       {/* Top bar */}
       <div className="absolute top-4 left-4 right-4 z-20 flex items-center gap-3">
         <div className="flex-1 flex items-center gap-3 bg-card rounded-xl px-4 py-3 shadow-card-hover border border-accent/10">
-          <ArrowLeft size={18} className="text-muted" />
+          <button onClick={() => router.back()}><ArrowLeft size={18} className="text-muted hover:text-accent" /></button>
           <span className="font-serif font-semibold text-text-light">Xəritə</span>
         </div>
         <button
@@ -116,10 +118,10 @@ export default function MapPage() {
             </div>
           </div>
           <div className="flex gap-2 mt-3">
-            <button className="flex-1 border border-accent/30 rounded-xl py-2 text-accent text-sm font-semibold hover:bg-accent/10 transition-colors">
+            <button onClick={() => router.push(`/place/${selectedPlace.id}`)} className="flex-1 border border-accent/30 rounded-xl py-2 text-accent text-sm font-semibold hover:bg-accent/10 transition-colors">
               Ətraflı bax
             </button>
-            <Button variant="gradient" className="flex-1 text-sm py-2">Bron et</Button>
+            <Button variant="gradient" className="flex-1 text-sm py-2" onClick={() => router.push(`/booking/${selectedPlace.id}`)}>Bron et</Button>
           </div>
         </div>
       )}

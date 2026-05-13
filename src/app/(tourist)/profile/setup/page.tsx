@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronRight, ChevronLeft, Upload } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -20,8 +21,12 @@ const interests = [
 ];
 
 export default function TouristProfileSetup() {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const toggleInterest = (id: string) =>
     setSelected(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
@@ -118,8 +123,17 @@ export default function TouristProfileSetup() {
               {step < steps.length - 1 && (
                 <button onClick={() => setStep(s => s + 1)} className="text-muted text-sm hover:text-accent">Keç</button>
               )}
-              <Button variant="gradient" onClick={() => step < steps.length - 1 ? setStep(s => s + 1) : undefined}>
-                {step < steps.length - 1 ? <>Davam et <ChevronRight size={16} /></> : "Tamamla"}
+              <Button variant="gradient" disabled={saving} onClick={async () => {
+                if (step < steps.length - 1) { setStep(s => s + 1); return; }
+                setSaving(true);
+                await fetch("/api/tourist/profile", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ phone, country, interests: selected }),
+                });
+                router.push("/home");
+              }}>
+                {step < steps.length - 1 ? <>Davam et <ChevronRight size={16} /></> : saving ? "Saxlanılır..." : "Tamamla"}
               </Button>
             </div>
           </div>

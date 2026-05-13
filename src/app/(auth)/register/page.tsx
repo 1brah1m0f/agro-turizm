@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { Compass, Tractor, Eye } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -11,6 +12,47 @@ type Role = "tourist" | "entrepreneur" | null;
 
 export default function RegisterPage() {
   const [role, setRole] = useState<Role>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    if (!role || !firstName || !lastName || !email || !password) {
+      setError("Məlumatlar natamamdır");
+      return;
+    }
+    setLoading(true);
+    const payload = {
+      email,
+      password,
+      name: `${firstName} ${lastName}`.trim(),
+      role: role === "tourist" ? "TOURIST" : "ENTREPRENEUR",
+    };
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data?.error ?? "Qeydiyyat zamanı xəta baş verdi");
+      setLoading(false);
+      return;
+    }
+    const result = await signIn("credentials", { email, password, redirect: false });
+    if (!result?.ok) {
+      setError("Daxil olmaq alınmadı");
+      setLoading(false);
+      return;
+    }
+    if (role === "entrepreneur") window.location.href = "/entrepreneur/dashboard";
+    else window.location.href = "/home";
+  };
 
   return (
     <div className="w-full max-w-md">
@@ -20,7 +62,6 @@ export default function RegisterPage() {
           FarMorfX-ə qoşulun və <span className="text-accent font-semibold">100 bonus koin</span> qazanın
         </p>
 
-        {/* Role selector */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <button
             onClick={() => setRole("tourist")}
@@ -57,39 +98,38 @@ export default function RegisterPage() {
           </button>
         </div>
 
-        {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-text-light text-sm font-medium block mb-2">Ad</label>
-              <Input placeholder="Adınız" />
+              <Input placeholder="Adınız" value={firstName} onChange={(event) => setFirstName(event.target.value)} />
             </div>
             <div>
               <label className="text-text-light text-sm font-medium block mb-2">Soyad</label>
-              <Input placeholder="Soyadınız" />
+              <Input placeholder="Soyadınız" value={lastName} onChange={(event) => setLastName(event.target.value)} />
             </div>
           </div>
           <div>
             <label className="text-text-light text-sm font-medium block mb-2">E-poçt</label>
-            <Input type="email" placeholder="email@nümunə.az" />
+            <Input type="email" placeholder="email@nümunə.az" value={email} onChange={(event) => setEmail(event.target.value)} />
           </div>
           <div>
             <label className="text-text-light text-sm font-medium block mb-2">Şifrə</label>
             <div className="relative">
-              <Input type="password" placeholder="Min. 8 simvol" className="pr-10" />
+              <Input type="password" placeholder="Min. 8 simvol" className="pr-10" value={password} onChange={(event) => setPassword(event.target.value)} />
               <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-accent">
                 <Eye size={16} />
               </button>
             </div>
           </div>
-
+          {error ? <p className="text-sm text-red-400">{error}</p> : null}
           <Button
             className="w-full"
             size="lg"
             variant="gradient"
-            disabled={!role}
+            disabled={!role || loading}
           >
-            {role ? "Qeydiyyatdan keç" : "Rol seçin"}
+            {loading ? "Yaradılır..." : role ? "Qeydiyyatdan keç" : "Rol seçin"}
           </Button>
         </form>
 

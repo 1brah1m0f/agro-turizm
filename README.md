@@ -2,6 +2,29 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Backend (Hackathon Demo)
+
+### Environment
+
+Create a `.env.local` with:
+
+```
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB?pgbouncer=true&connection_limit=1
+NEXTAUTH_SECRET=your-secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+### Prisma
+
+Prisma v7 reads `DATABASE_URL` from `.env.local` via `prisma.config.ts`.
+
+```
+npx prisma db push
+npx prisma db seed
+```
+
+### Run Dev Server
+
 First, run the development server:
 
 ```bash
