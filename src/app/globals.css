@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* ── Legacy palette (kept for non-map pages) ── */
   --color-primary: #1A688E;
   --color-primary-light: #155477;
   --color-primary-dark: #0D3D52;
@@ -12,14 +13,30 @@
   --color-text-light: #0D3D52;
   --color-muted: #7AABB8;
 
-  --font-serif: Helvetica, Arial, sans-serif;
-  --font-sans: Helvetica, Arial, sans-serif;
+  /* ── Eco-premium design system ── */
+  --eco-green:       #1F6B4F;
+  --eco-green-soft:  #2E8B57;
+  --eco-gold:        #D6A75F;
+  --eco-gold-dark:   #B8843A;
+  --eco-bg:          #F7F8F5;
+  --eco-card:        #FFFFFF;
+  --eco-text:        #1E1E1E;
+  --eco-muted:       #6B7280;
+
+  --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-sans:  var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
 
   --shadow-card: 0 8px 32px rgba(26, 104, 142, 0.15);
   --shadow-card-hover: 0 16px 48px rgba(26, 104, 142, 0.25);
+  --shadow-eco:      0 4px 24px rgba(31, 107, 79, 0.10);
+  --shadow-eco-lg:   0 12px 48px rgba(31, 107, 79, 0.14);
+  --shadow-float:    0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-float-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
 
   --gradient-main: linear-gradient(135deg, #1A688E 0%, #55C841 100%);
   --gradient-dark: linear-gradient(135deg, #0D3D52 0%, #1A688E 100%);
+  --gradient-eco:  linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%);
+  --gradient-gold: linear-gradient(135deg, #D6A75F 0%, #C4903F 100%);
 
   --animate-float: float 3s ease-in-out infinite;
 }
@@ -153,7 +170,27 @@
   .animate-float { animation: var(--animate-float); }
   .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-card-hover { box-shadow: var(--shadow-card-hover); }
+  .shadow-eco { box-shadow: var(--shadow-eco); }
+  .shadow-eco-lg { box-shadow: var(--shadow-eco-lg); }
+  .shadow-float { box-shadow: var(--shadow-float); }
+  .shadow-float-lg { box-shadow: var(--shadow-float-lg); }
   .bg-gradient-main { background: var(--gradient-main); }
   .bg-gradient-dark { background: var(--gradient-dark); }
+  .bg-gradient-eco  { background: var(--gradient-eco); }
+  .bg-gradient-gold { background: var(--gradient-gold); }
   .divider-accent { border-color: rgba(85, 200, 65, 0.2); }
+
+  /* Glassmorphism helper */
+  .glass {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+  .glass-eco {
+    background: rgba(31, 107, 79, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(31, 107, 79, 0.12);
+  }
 }

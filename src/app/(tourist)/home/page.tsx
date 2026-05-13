@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, MapPin, Star, Flame, Coins, ChevronRight } from "lucide-react";
-import Badge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
 import { cn } from "@/lib/utils/cn";
 
@@ -25,7 +24,6 @@ const categories = [
   { emoji: "🐴", label: "At Minmə" },
   { emoji: "🍯", label: "Arıçılıq" },
 ];
-
 const categoryEmoji: Record<string, string> = {
   Ferma: "🌾", Balıqçılıq: "🎣", Kamp: "⛺", Bag: "🍎", "At Minme": "🐴", Ariciliq: "🍯",
 };
@@ -62,146 +60,256 @@ export default function TouristHomePage() {
   });
 
   return (
-    <div className="min-h-screen bg-primary">
-      <div className="bg-primary-dark px-4 pt-4 pb-3 flex items-center justify-between sticky top-0 z-10 border-b border-accent/10">
-        <span className="font-serif font-bold text-text-dark">FarMorfX</span>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 bg-accent/10 border border-accent/20 rounded-full px-3 py-1.5">
-            <Coins size={14} className="text-accent" />
-            <span className="text-accent text-xs font-bold">{coinBalance}</span>
-          </div>
+    <div className="h-full overflow-y-auto"><div className="px-6 pt-8 pb-10" style={{ background: "#F7F8F5", minHeight: "100%" }}>
+
+      {/* Coin balance bar — below nav pill */}
+      <div
+        className="flex items-center gap-3 rounded-[16px] px-4 py-3 mb-6"
+        style={{
+          background: "#ffffff",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+          border: "1px solid rgba(31,107,79,0.08)",
+        }}
+      >
+        <div
+          className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0"
+          style={{ background: "linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%)" }}
+        >
+          <Coins size={16} className="text-white" />
         </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] text-[#6B7280] uppercase tracking-wide font-medium">Koin Balansı</p>
+          <p className="text-[#1E1E1E] font-bold text-lg leading-tight">{coinBalance.toLocaleString()}</p>
+        </div>
+        <button
+          onClick={() => router.push("/coins")}
+          className="text-[11px] font-semibold text-[#1F6B4F] flex items-center gap-1 hover:opacity-70 transition-opacity"
+        >
+          Ətraflı <ChevronRight size={12} />
+        </button>
       </div>
 
-      <div className="px-4 pb-24 space-y-6">
-        <div className="pt-6">
-          <h1 className="font-serif text-2xl font-bold text-text-dark mb-4">Haraya gedək bu gün?</h1>
-          <div className="relative mb-4">
-            <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-            <input
-              className="w-full bg-card rounded-full py-3 pl-10 pr-12 text-text-light text-sm border border-accent/10 outline-none focus:border-accent placeholder-muted"
-              placeholder="Məkan, fəaliyyət axtar..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter") router.push(`/explore?search=${encodeURIComponent((e.target as HTMLInputElement).value)}`);
-              }}
-            />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-main flex items-center justify-center">
-              <Search size={14} className="text-white" />
-            </button>
-          </div>
+      {/* Hero / Search */}
+      <div className="mb-6">
+        <h1
+          className="text-[22px] font-bold text-[#1E1E1E] mb-1 leading-tight"
+          style={{ fontFamily: "var(--font-serif)" }}
+        >
+          Haraya gedək bu gün?
+        </h1>
+        <p className="text-[#6B7280] text-sm mb-4">Azərbaycanın ən gözəl aqro-turizm məkanları</p>
 
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {quickFilters.map(f => (
-              <button key={f} onClick={() => setActiveFilter(f)}
-                className={cn("flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-all",
-                  activeFilter === f ? "bg-accent text-white" : "bg-primary-dark text-muted border border-muted/20 hover:border-accent/40")}>
-                {f}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
-          {categories.map(cat => (
-            <button key={cat.label} onClick={() => setActiveCategory(activeCategory === cat.label ? null : cat.label)}
-              className={cn("flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2.5 rounded-xl border transition-all",
-                activeCategory === cat.label ? "border-accent bg-accent/10 text-accent" : "border-primary-light text-muted hover:border-accent/30")}>
-              <span className="text-xl">{cat.emoji}</span>
-              <span className="text-xs whitespace-nowrap">{cat.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-8"><Spinner /></div>
-        ) : (
-          <>
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-serif text-lg font-bold text-text-dark border-b-2 border-accent pb-1 inline-block">
-                  Tövsiyə olunan məkanlar
-                </h2>
-                <button onClick={() => router.push("/explore")} className="text-accent text-xs flex items-center gap-1">
-                  Hamısı <ChevronRight size={14} />
-                </button>
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-                {sorted.slice(0, 3).map((place) => (
-                  <button key={place.id} onClick={() => router.push(`/place/${place.id}`)}
-                    className="flex-shrink-0 w-56 bg-card rounded-xl shadow-card overflow-hidden border border-accent/10 text-left">
-                    <div className="h-32 bg-gradient-dark flex items-center justify-center text-4xl relative">
-                      {categoryEmoji[place.category] ?? "🌿"}
-                      <div className="absolute top-2 left-2">
-                        <Badge variant="accent" className="text-[10px]">{place.category}</Badge>
-                      </div>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-semibold text-text-light text-sm mb-1 truncate">{place.name}</h3>
-                      <div className="flex items-center gap-1 mb-1">
-                        <Star size={11} className="fill-accent text-accent" />
-                        <span className="text-xs text-muted">{place.entrepreneur.location}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          <MapPin size={11} className="text-muted" />
-                          <span className="text-xs text-muted truncate">{place.entrepreneur.businessName}</span>
-                        </div>
-                        <span className="text-xs font-bold text-accent">₼{place.price}/nəfər</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-serif text-lg font-bold text-text-dark mb-3">Populyar Aqro Məkanlar</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {sorted.map((place) => (
-                  <button key={place.id} onClick={() => router.push(`/place/${place.id}`)}
-                    className="bg-card rounded-xl shadow-card overflow-hidden border border-accent/10 text-left">
-                    <div className="h-24 bg-gradient-dark flex items-center justify-center text-3xl">
-                      {categoryEmoji[place.category] ?? "🌿"}
-                    </div>
-                    <div className="p-3">
-                      <h3 className="font-semibold text-text-light text-xs mb-1 truncate">{place.name}</h3>
-                      <div className="flex items-center gap-1">
-                        <MapPin size={10} className="text-muted" />
-                        <span className="text-xs text-muted truncate">{place.entrepreneur.location}</span>
-                        <span className="text-xs text-muted ml-auto">₼{place.price}</span>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {!loading && sorted.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-4xl mb-3">🔍</p>
-            <p className="text-muted text-sm">Məkan tapılmadı</p>
-          </div>
-        )}
-
-        <div className="bg-card rounded-xl p-4 shadow-card border border-accent/20">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Flame size={16} className="text-accent" />
-              <span className="font-semibold text-text-light text-sm">Günlük Tapşırıq</span>
-            </div>
-            <Badge variant="accent" className="text-[10px]">+50 KOİN</Badge>
-          </div>
-          <p className="text-muted text-sm mb-3">Meyvə yığım aktivliyini tamamla</p>
-          <div className="h-1.5 rounded-full bg-primary-light mb-3 overflow-hidden">
-            <div className="h-full w-[65%] rounded-full bg-gradient-main" />
-          </div>
-          <button className="w-full bg-gradient-main text-white rounded-xl py-2.5 text-sm font-semibold">
-            İndi Et
+        <div
+          className="relative flex items-center gap-2 rounded-[14px] px-4 py-3"
+          style={{
+            background: "#ffffff",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+            border: "1px solid rgba(31,107,79,0.08)",
+          }}
+        >
+          <MapPin size={15} className="text-[#6B7280] flex-shrink-0" />
+          <input
+            className="flex-1 bg-transparent text-[#1E1E1E] text-sm outline-none placeholder:text-[#9CA3AF]"
+            placeholder="Məkan, fəaliyyət axtar..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") router.push(`/explore?search=${encodeURIComponent((e.target as HTMLInputElement).value)}`);
+            }}
+          />
+          <button
+            className="w-7 h-7 rounded-[9px] flex items-center justify-center flex-shrink-0"
+            style={{ background: "linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%)" }}
+          >
+            <Search size={13} className="text-white" />
           </button>
         </div>
       </div>
-    </div>
+
+      {/* Quick filters */}
+      <div className="flex gap-2 overflow-x-auto pb-1 mb-5" style={{ scrollbarWidth: "none" }}>
+        {quickFilters.map(f => (
+          <button
+            key={f}
+            onClick={() => setActiveFilter(f)}
+            className={cn(
+              "flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all",
+              activeFilter === f
+                ? "text-white"
+                : "text-[#6B7280] border hover:border-[#1F6B4F]/40 hover:text-[#1F6B4F]",
+            )}
+            style={
+              activeFilter === f
+                ? { background: "linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%)" }
+                : { background: "#ffffff", border: "1px solid #E5E7EB" }
+            }
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {/* Category chips */}
+      <div className="flex gap-3 overflow-x-auto pb-2 mb-6" style={{ scrollbarWidth: "none" }}>
+        {categories.map(cat => (
+          <button
+            key={cat.label}
+            onClick={() => setActiveCategory(activeCategory === cat.label ? null : cat.label)}
+            className={cn(
+              "flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2.5 rounded-[14px] border transition-all",
+              activeCategory === cat.label
+                ? "border-[#1F6B4F] text-[#1F6B4F]"
+                : "border-[#E5E7EB] text-[#6B7280] hover:border-[#1F6B4F]/40",
+            )}
+            style={{
+              background: activeCategory === cat.label ? "rgba(31,107,79,0.06)" : "#ffffff",
+            }}
+          >
+            <span className="text-xl">{cat.emoji}</span>
+            <span className="text-[11px] font-medium whitespace-nowrap">{cat.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-8"><Spinner /></div>
+      ) : (
+        <>
+          {/* Recommended */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2
+                className="text-[16px] font-bold text-[#1E1E1E]"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
+                Tövsiyə olunan məkanlar
+              </h2>
+              <button
+                onClick={() => router.push("/explore")}
+                className="text-[#1F6B4F] text-xs font-semibold flex items-center gap-1 hover:opacity-70 transition-opacity"
+              >
+                Hamısı <ChevronRight size={13} />
+              </button>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+              {sorted.slice(0, 4).map((place) => (
+                <button
+                  key={place.id}
+                  onClick={() => router.push(`/place/${place.id}`)}
+                  className="flex-shrink-0 w-52 rounded-[16px] overflow-hidden text-left transition-all duration-200 hover:-translate-y-1"
+                  style={{
+                    background: "#ffffff",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                  }}
+                >
+                  <div
+                    className="h-28 flex items-center justify-center text-4xl relative"
+                    style={{ background: "linear-gradient(135deg, #d1fae5 0%, #6ee7b7 100%)" }}
+                  >
+                    {categoryEmoji[place.category] ?? "🌿"}
+                    <div
+                      className="absolute top-2 left-2 text-white text-[9px] font-bold px-2 py-0.5 rounded-md"
+                      style={{ background: "rgba(31,107,79,0.75)" }}
+                    >
+                      {place.category}
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-[#1E1E1E] text-sm mb-1 truncate">{place.name}</h3>
+                    <div className="flex items-center gap-1 mb-1">
+                      <Star size={11} className="text-[#D6A75F] fill-[#D6A75F]" />
+                      <span className="text-xs text-[#6B7280]">{place.entrepreneur.location}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <MapPin size={10} className="text-[#9CA3AF]" />
+                        <span className="text-[11px] text-[#9CA3AF] truncate">{place.entrepreneur.businessName}</span>
+                      </div>
+                      <span className="text-xs font-bold text-[#1F6B4F]">₼{place.price}/nəfər</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Popular grid */}
+          <div>
+            <h2
+              className="text-[16px] font-bold text-[#1E1E1E] mb-4"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Populyar Aqro Məkanlar
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {sorted.map((place) => (
+                <button
+                  key={place.id}
+                  onClick={() => router.push(`/place/${place.id}`)}
+                  className="rounded-[16px] overflow-hidden text-left transition-all duration-200 hover:-translate-y-1"
+                  style={{ background: "#ffffff", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
+                >
+                  <div
+                    className="h-20 flex items-center justify-center text-3xl"
+                    style={{ background: "linear-gradient(135deg, #d1fae5 0%, #6ee7b7 100%)" }}
+                  >
+                    {categoryEmoji[place.category] ?? "🌿"}
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-[#1E1E1E] text-xs mb-1 truncate">{place.name}</h3>
+                    <div className="flex items-center gap-1">
+                      <MapPin size={10} className="text-[#9CA3AF]" />
+                      <span className="text-[11px] text-[#9CA3AF] truncate">{place.entrepreneur.location}</span>
+                      <span className="text-xs font-bold text-[#1F6B4F] ml-auto">₼{place.price}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {!loading && sorted.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-4xl mb-3">🔍</p>
+          <p className="text-[#6B7280] text-sm">Məkan tapılmadı</p>
+        </div>
+      )}
+
+      {/* Daily task card */}
+      <div
+        className="mt-8 rounded-[16px] p-5"
+        style={{
+          background: "#ffffff",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+          border: "1px solid rgba(31,107,79,0.08)",
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Flame size={16} className="text-[#1F6B4F]" />
+            <span className="font-semibold text-[#1E1E1E] text-sm">Günlük Tapşırıq</span>
+          </div>
+          <span
+            className="text-[10px] font-bold text-white px-2.5 py-1 rounded-full"
+            style={{ background: "linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%)" }}
+          >
+            +50 KOİN
+          </span>
+        </div>
+        <p className="text-[#6B7280] text-sm mb-3">Meyvə yığım aktivliyini tamamla</p>
+        <div className="h-1.5 rounded-full bg-[#F0F0EC] mb-4 overflow-hidden">
+          <div
+            className="h-full w-[65%] rounded-full"
+            style={{ background: "linear-gradient(90deg, #1F6B4F, #2E8B57)" }}
+          />
+        </div>
+        <button
+          className="w-full py-2.5 rounded-[12px] text-sm font-semibold text-white"
+          style={{ background: "linear-gradient(135deg, #1F6B4F 0%, #2E8B57 100%)" }}
+        >
+          İndi Et
+        </button>
+      </div>
+    </div></div>
   );
 }

@@ -120,7 +120,7 @@ function DetailPanel({ location, routeInfo, userHasLocation, onClose }: {
         <PhotoCarousel photos={location.photos} height="h-72" />
         <button onClick={onClose}
           className="absolute top-3 left-3 w-9 h-9 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-black/60 transition-colors z-10">
-          <ChevronLeft size={18} />
+          <X size={18} />
         </button>
         <div className="absolute bottom-3 left-3 flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-xs font-bold" style={{ background: cat.color + "e0", backdropFilter: "blur(4px)" }}>
           <span>{cat.icon}</span>{TYPE_META[location.type].label}

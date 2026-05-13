@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroFlow — Eco Tourism</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-dark:  #1A5C3A;
+  --green-deep:  #0F3D26;
+  --green-mid:   #1F6B4F;
+  --green-accent:#3DAB72;
+  --green-soft:  #E8F5EE;
+  --green-tag:   #27AE60;
+  --orange:      #F59E0B;
+  --red:         #EF4444;
+  --bg:          #F4FAF7;
+  --text-dark:   #1A2B22;
+  --text-mid:    #4A6358;
+  --text-light:  #7A9A87;
+  --white:       #ffffff;
+  --card-shadow: 0 2px 12px rgba(26,92,58,0.06);
+  --card-hover:  0 8px 28px rgba(26,92,58,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(45,138,94,0.2); border-radius: 4px; }
+
+/* ── Sidebar ── */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 220px;
+  z-index: 200;
+  background: linear-gradient(180deg, #1A5C3A 0%, #0F3D26 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--green-accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.logo-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+
+.logo-text { display: flex; flex-direction: column; }
+.logo-name { font-weight: 700; font-size: 15px; color: #fff; line-height: 1.2; }
+.logo-sub  { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.45); letter-spacing: 1.4px; text-transform: uppercase; margin-top: 1px; }
+
+.sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+
+.nav-section-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 14px 16px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  margin: 1px 8px;
+  border-radius: 9px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.75);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all .2s ease;
+  position: relative;
+  user-select: none;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.nav-item.active {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -8px; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 20px;
+  background: var(--green-accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.nav-icon {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.nav-item.active .nav-icon,
+.nav-item:hover .nav-icon { opacity: 1; }
+
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+.nav-badge.orange { background: rgba(245,158,11,0.25); color: #F59E0B; }
+.nav-badge.green  { background: rgba(61,171,114,0.2);  color: #3DAB72; }
+
+.sidebar-footer {
+  padding: 12px 8px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.issues-pill {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 30px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #F87171;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.issues-pill:hover { background: rgba(239,68,68,0.22); }
+
+/* ── Header ── */
+#header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 58px;
+  z-index: 100;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(26,92,58,0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 236px;
+  gap: 12px;
+}
+
+.header-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border: 1.5px solid rgba(26,92,58,0.12);
+  border-radius: 10px;
+  padding: 0 12px;
+  height: 36px;
+  transition: border-color .2s;
+}
+.header-search:focus-within { border-color: var(--green-accent); }
+.header-search svg { color: var(--text-light); flex-shrink: 0; }
+.header-search input {
+  border: none; background: transparent; outline: none;
+  font-family: inherit; font-size: 13px; color: var(--text-dark);
+  flex: 1; width: 100%;
+}
+.header-search input::placeholder { color: var(--text-light); }
+
+.nav-pill {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  box-shadow: rgba(0,0,0,0.08) 0px 4px 24px;
+  border: 1px solid rgba(255,255,255,0.8);
+  display: flex; align-items: center; gap: 2px;
+  padding: 6px 8px;
+  border-radius: 16px;
+}
+
+.pill-btn {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  border: none; background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #6B7280;
+  transition: all .2s ease;
+  position: relative;
+}
+.pill-btn:hover { background: var(--green-soft); color: var(--green-mid); }
+
+.pill-dot {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 7px; height: 7px;
+  background: var(--orange);
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+}
+
+/* ── Main ── */
+#main {
+  margin-left: 220px;
+  margin-top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── Shared components ── */
+.page-wrap { padding: 28px 28px 40px; }
+.page-title { font-size: 22px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px; }
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  transition: all .2s ease;
+  overflow: hidden;
+}
+.card:hover { box-shadow: var(--card-hover); transform: translateY(-2px); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all .2s ease;
+}
+.btn-primary { background: var(--green-mid); color: #fff; }
+.btn-primary:hover { background: var(--green-dark); }
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(26,92,58,0.15);
+  color: var(--text-mid);
+}
+.btn-secondary:hover { background: var(--green-soft); }
+
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: 30px;
+  font-size: 11px; font-weight: 600;
+  line-height: 1.6;
+}
+.badge-green  { background: rgba(39,174,96,0.12);  color: var(--green-tag); }
+.badge-orange { background: rgba(245,158,11,0.12); color: var(--orange); }
+.badge-gray   { background: rgba(107,114,128,0.1); color: #6B7280; }
+
+.coin-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: var(--text-dark);
+}
+.coin-circle {
+  width: 20px; height: 20px;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #fff; font-weight: 700;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 30px;
+  border: 1.5px solid rgba(26,92,58,0.1);
+  background: #fff;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+.chip:hover { background: var(--green-soft); border-color: var(--green-accent); color: var(--green-mid); }
+.chip.active { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
+
+/* ══════════════════════════════════════════════
+   PAGE 1 — ANA SƏHİFƏ
+══════════════════════════════════════════════ */
+#page-home {}
+
+.hero-card {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+  border-radius: 18px;
+  padding: 32px 32px 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.hero-card::before {
+  content: '';
+  position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px;
+  background: rgba(61,171,114,0.15);
+  border-radius: 50%;
+}
+.hero-card::after {
+  content: '';
+  position: absolute; bottom: -60px; right: 60px;
+  width: 140px; height: 140px;
+  background: rgba(61,171,114,0.1);
+  border-radius: 50%;
+}
+.hero-label {
+  display: inline-block;
+  background: rgba(61,171,114,0.25);
+  border: 1px solid rgba(61,171,114,0.4);
+  color: #86EFAC;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.hero-title { font-size: 26px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+.hero-sub   { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 22px; }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green-accent);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600; font-size: 13.5px;
+  cursor: pointer; border: none;
+  transition: all .2s ease;
+  position: relative; z-index: 1;
+}
+.hero-cta:hover { background: #34C068; transform: translateY(-1px); }
+
+.coin-bar {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 16px;
+}
+.coin-bar-icon {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #F59E0B, #EF4444);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.coin-bar-label { font-size: 11px; color: var(--text-light); margin-bottom: 1px; }
+.coin-bar-amount { font-size: 22px; font-weight: 700; color: var(--text-dark); }
+.coin-bar-btn {
+  margin-left: auto;
+  background: var(--green-soft);
+  color: var(--green-mid);
+  border: none; border-radius: 10px;
+  padding: 8px 14px;
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; transition: all .2s ease;
+}
+.coin-bar-btn:hover { background: var(--green-mid); color: #fff; }
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.quick-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 12px 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer;
+  transition: all .2s ease;
+  border: 1.5px solid transparent;
+}
+.quick-card:hover {
+  box-shadow: var(--card-hover);
+  transform: translateY(-2px);
+  border-color: rgba(61,171,114,0.2);
+}
+.quick-emoji {
+  width: 44px; height: 44px;
+  background: var(--green-soft);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.quick-label { font-size: 12px; font-weight: 600; color: var(--text-mid); text-align: center; }
+
+.section-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-dark);
+  margin: 24px 0 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.see-all { font-size: 12px; font-weight: 600; color: var(--green-accent); cursor: pointer; }
+.see-all:hover { color: var(--green-mid); }
+
+.place-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.place-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: var(--card-shadow); transition: all .2s ease; cursor: pointer; }
+.place-card:hover { box-shadow: var(--card-hover); transform: translateY(-2px); }
+.place-img {
+  height: 120px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  position: relative;
+}
+.place-body { padding: 12px 14px 14px; }
+.place-name { font-size: 13.5px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+.place-loc  { font-size: 11.5px; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.place-foot { display: flex; align-items: center; justify-content: space-between; }
+.place-rating { display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; color: var(--text-dark); }
+.place-rating span { color: var(--orange); }
+
+/* ══════════════════════════════════════════════
+   PAGE 2 — KƏŞF ET
+══════════════════════════════════════════════ */
+.discover-search {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff;
+  border: 1.5px solid rgba(26,92,58,0.1);
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 42px;
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+  transition: border-color .2s;
+}
+.discover-search:focus-within { border-color: var(--green-accent); }
+.discover-search input {
+  border: none; background: transparent; outline: none;
+  font-family: inherit; font-size: 13.5px; color: var(--text-dark); flex: 1;
+}
+.discover-search input::placeholder { color: var(--text-light); }
+
+.chips-row { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; }
+.chips-row::-webkit-scrollbar { height: 0; }
+
+.result-count { font-size: 12.5px; color: var(--text-light); margin-bottom: 16px; font-weight: 500; }
+
+.disc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.disc-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: var(--card-shadow); transition: all .2s ease; cursor: pointer; }
+.disc-card:hover { box-shadow: var(--card-hover); transform: translateY(-2px); }
+.disc-card.full { grid-column: 1 / -1; display: flex; flex-direction: row; }
+.disc-card.full .disc-img { width: 200px; height: auto; flex-shrink: 0; border-radius: 0; }
+.disc-img {
+  height: 130px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  position: relative;
+}
+.disc-tag {
+  position: absolute; top: 10px; left: 10px;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+  color: #fff;
+  letter-spacing: 0.4px;
+}
+.disc-fav {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px;
+  transition: all .2s;
+}
+.disc-fav:hover { background: #fff; transform: scale(1.1); }
+.disc-body { padding: 12px 14px 14px; flex: 1; }
+.disc-name { font-size: 13.5px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+.disc-loc  { font-size: 11.5px; color: var(--text-light); margin-bottom: 8px; }
+.disc-foot { display: flex; align-items: center; justify-content: space-between; }
+
+/* ══════════════════════════════════════════════
+   PAGE 3 — XƏRİTƏ
+══════════════════════════════════════════════ */
+#page-map { height: 100%; }
+.map-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; }
+
+.map-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(61,171,114,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 70%, rgba(39,174,96,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(31,107,79,0.04) 0%, transparent 70%),
+    linear-gradient(160deg, #EAF4EF 0%, #DCF0E6 35%, #E4F2E8 60%, #D8EDE0 100%);
+}
+/* Grid lines simulate map tile lines */
+.map-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(61,171,114,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,171,114,0.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+/* Road-like diagonal lines */
+.map-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(45deg, transparent 45%, rgba(200,220,210,0.5) 45%, rgba(200,220,210,0.5) 55%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, rgba(200,220,210,0.4) 45%, rgba(200,220,210,0.4) 55%, transparent 55%);
+  background-size: 200px 200px;
+}
+
+.map-road-h {
+  position: absolute;
+  height: 6px; background: rgba(180,200,190,0.6);
+  border-radius: 3px;
+}
+.map-road-v {
+  position: absolute;
+  width: 6px; background: rgba(180,200,190,0.6);
+  border-radius: 3px;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 16px; left: 16px;
+  width: 320px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(26,92,58,0.14);
+  z-index: 10;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  max-height: calc(100% - 32px);
+}
+.map-overlay-head {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid rgba(26,92,58,0.08);
+}
+.map-overlay-title {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.map-overlay-title h3 { font-size: 15px; font-weight: 700; color: var(--text-dark); }
+.map-count {
+  font-size: 11px; font-weight: 700;
+  background: var(--green-soft); color: var(--green-mid);
+  padding: 3px 9px; border-radius: 20px;
+}
+
+.map-search {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--bg); border: 1.5px solid rgba(26,92,58,0.1);
+  border-radius: 9px; padding: 0 10px; height: 34px;
+  margin-bottom: 10px;
+}
+.map-search input {
+  border: none; background: transparent; outline: none;
+  font-family: inherit; font-size: 12.5px; color: var(--text-dark); flex: 1;
+}
+.map-search input::placeholder { color: var(--text-light); }
+
+.map-chips { display: flex; gap: 6px; overflow-x: auto; }
+.map-chips::-webkit-scrollbar { height: 0; }
+.map-chip {
+  padding: 4px 11px; border-radius: 20px;
+  border: 1.5px solid rgba(26,92,58,0.1);
+  background: #fff; font-size: 11.5px; font-weight: 500;
+  color: var(--text-mid); cursor: pointer; white-space: nowrap;
+  transition: all .2s;
+}
+.map-chip.active, .map-chip:hover { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
+
+.map-list { overflow-y: auto; flex: 1; padding: 8px 0; }
+
+.map-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer; transition: background .2s;
+}
+.map-item:hover { background: var(--green-soft); }
+.map-item-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.map-item-info { flex: 1; min-width: 0; }
+.map-item-name { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+.map-item-meta { font-size: 11.5px; color: var(--text-light); }
+.map-item-price { font-size: 13px; font-weight: 700; color: var(--green-mid); white-space: nowrap; }
+
+/* Map pins */
+.map-pin {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform .2s;
+}
+.map-pin:hover { transform: translate(-50%, -50%) scale(1.15); }
+.map-pin-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.map-pin-badge {
+  position: absolute;
+  top: -20px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-dark);
+  color: #fff;
+  font-size: 9px; font-weight: 700;
+  padding: 2px 5px; border-radius: 5px;
+  white-space: nowrap;
+}
+.map-pin-badge::after {
+  content: '';
+  position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 3px solid transparent;
+  border-top-color: var(--text-dark);
+}
+
+/* ══════════════════════════════════════════════
+   PAGE 4 — REZERVASİYALAR
+══════════════════════════════════════════════ */
+.tabs-row {
+  display: flex; gap: 4px;
+  background: rgba(26,92,58,0.06);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  padding: 7px 18px;
+  border-radius: 9px;
+  border: none; background: transparent;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer; transition: all .2s ease;
+}
+.tab-btn.active { background: var(--green-mid); color: #fff; }
+.tab-btn:not(.active):hover { background: rgba(26,92,58,0.06); color: var(--green-mid); }
+
+.res-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: all .2s ease;
+}
+.res-card:hover { box-shadow: var(--card-hover); }
+.res-emoji-box {
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+}
+.res-info { flex: 1; min-width: 0; }
+.res-name { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+.res-meta { font-size: 12px; color: var(--text-light); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.res-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.res-price { margin-left: auto; text-align: right; }
+.res-price .price { font-size: 17px; font-weight: 700; color: var(--text-dark); }
+.res-price .price-label { font-size: 11px; color: var(--text-light); }
+
+/* ══════════════════════════════════════════════
+   PAGE 5 — KOİNLƏR
+══════════════════════════════════════════════ */
+.coins-hero {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+  border-radius: 18px;
+  padding: 28px 28px 24px;
+  color: #fff;
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 16px;
+}
+.coins-hero-icon { font-size: 48px; line-height: 1; }
+.coins-hero-amount { font-size: 38px; font-weight: 700; line-height: 1.1; margin-bottom: 4px; }
+.coins-hero-label { font-size: 13px; opacity: 0.85; }
+
+.coins-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  margin-bottom: 24px;
+}
+.coins-stat {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: var(--card-shadow);
+}
+.coins-stat-val { font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+.coins-stat-label { font-size: 11.5px; color: var(--text-light); }
+
+.tx-list { background: #fff; border-radius: 14px; box-shadow: var(--card-shadow); overflow: hidden; }
+.tx-header { padding: 14px 16px 10px; border-bottom: 1px solid rgba(26,92,58,0.07); font-size: 14px; font-weight: 700; color: var(--text-dark); }
+.tx-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(26,92,58,0.05);
+  transition: background .2s;
+}
+.tx-item:last-child { border-bottom: none; }
+.tx-item:hover { background: var(--bg); }
+.tx-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.tx-icon.earn { background: rgba(39,174,96,0.12); }
+.tx-icon.spend { background: rgba(239,68,68,0.1); }
+.tx-info { flex: 1; }
+.tx-name { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 2px; }
+.tx-date { font-size: 11.5px; color: var(--text-light); }
+.tx-amount { font-size: 14px; font-weight: 700; }
+.tx-amount.earn  { color: var(--green-tag); }
+.tx-amount.spend { color: var(--red); }
+
+/* ══════════════════════════════════════════════
+   PAGE 6 — MÜKAFATLAR
+══════════════════════════════════════════════ */
+.rewards-sub { font-size: 14px; color: var(--text-mid); margin-top: -10px; margin-bottom: 22px; }
+.rewards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.reward-card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: var(--card-shadow); transition: all .2s ease; }
+.reward-card:hover { box-shadow: var(--card-hover); transform: translateY(-2px); }
+.reward-img {
+  height: 110px;
+  background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px;
+}
+.reward-body { padding: 14px; }
+.reward-name { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+.reward-desc { font-size: 12px; color: var(--text-light); margin-bottom: 12px; line-height: 1.5; }
+.reward-foot { display: flex; align-items: center; justify-content: space-between; }
+.btn-claim {
+  padding: 8px 16px; border-radius: 10px;
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; border: none; transition: all .2s;
+}
+.btn-claim.can { background: var(--green-mid); color: #fff; }
+.btn-claim.can:hover { background: var(--green-dark); }
+.btn-claim.cant { background: rgba(107,114,128,0.1); color: #9CA3AF; cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════
+   PAGE 7 — PROFİL
+══════════════════════════════════════════════ */
+.profile-hero {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+  border-radius: 18px;
+  padding: 28px 24px;
+  color: #fff;
+  display: flex; align-items: center; gap: 18px;
+  margin-bottom: 16px;
+}
+.profile-avatar {
+  width: 62px; height: 62px;
+  background: var(--green-accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700;
+  flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,0.3);
+}
+.profile-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.profile-email { font-size: 13px; opacity: 0.7; margin-bottom: 4px; }
+.profile-since { font-size: 12px; opacity: 0.55; }
+
+.profile-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-bottom: 20px;
+}
+.pstat {
+  background: #fff; border-radius: 12px;
+  padding: 14px 10px;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+}
+.pstat-val { font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+.pstat-label { font-size: 10.5px; color: var(--text-light); line-height: 1.3; }
+
+.menu-group { background: #fff; border-radius: 14px; box-shadow: var(--card-shadow); overflow: hidden; margin-bottom: 12px; }
+.menu-group-title { padding: 12px 16px 6px; font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.8px; }
+.menu-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px;
+  cursor: pointer; transition: background .2s;
+  border-top: 1px solid rgba(26,92,58,0.05);
+}
+.menu-item:first-of-type { border-top: none; }
+.menu-item:hover { background: var(--green-soft); }
+.menu-icon {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: var(--green-soft);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.menu-item.danger .menu-icon { background: rgba(239,68,68,0.1); }
+.menu-item.danger .menu-label { color: var(--red); }
+.menu-label { font-size: 13.5px; font-weight: 500; color: var(--text-dark); flex: 1; }
+.menu-chevron { color: var(--text-light); }
+
+/* SVG icon helpers */
+svg { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <img src="logo.jpg" alt="AgroFlow" onerror="this.parentElement.textContent='🌿'">
+    </div>
+    <div class="logo-text">
+      <span class="logo-name">AgroFlow</span>
+      <span class="logo-sub">Eco Tourism</span>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Əsas</div>
+
+    <div class="nav-item active" onclick="navigate('home', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      Ana Səhifə
+    </div>
+
+    <div class="nav-item" onclick="navigate('discover', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      Kəşf Et
+    </div>
+
+    <div class="nav-item" onclick="navigate('map', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>
+      Xəritə
+    </div>
+
+    <div class="nav-item" onclick="navigate('reservations', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+      Rezervasiyalar
+      <span class="nav-badge orange">3</span>
+    </div>
+
+    <div class="nav-section-label">Kəşf</div>
+
+    <div class="nav-item" onclick="navigate('coins', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+      Koinlər
+      <span class="nav-badge green">480</span>
+    </div>
+
+    <div class="nav-item" onclick="navigate('rewards', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></span>
+      Mükafatlar
+    </div>
+
+    <div class="nav-item" onclick="navigate('profile', this)">
+      <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+      Profil
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="issues-pill">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      2 Issues
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ HEADER ═══════ -->
+<header id="header">
+  <div class="header-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Məkan, bölgə axtar...">
+  </div>
+
+  <div class="nav-pill">
+    <button class="pill-btn" title="Ana Səhifə" onclick="navigate('home',null)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </button>
+    <button class="pill-btn" title="Xəritə" onclick="navigate('map',null)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    </button>
+    <button class="pill-btn" title="Rezervasiyalar" onclick="navigate('reservations',null)" style="position:relative">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="pill-dot"></span>
+    </button>
+    <button class="pill-btn" title="Koinlər" onclick="navigate('coins',null)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    </button>
+    <button class="pill-btn" title="Mükafat" onclick="navigate('rewards',null)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+    </button>
+    <button class="pill-btn" title="Profil" onclick="navigate('profile',null)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════ MAIN ═══════ -->
+<main id="main">
+
+  <!-- ─── PAGE: ANA SƏHİFƏ ─── -->
+  <div id="page-home" class="page active">
+    <div class="page-wrap">
+      <!-- Hero -->
+      <div class="hero-card">
+        <div class="hero-label">🌿 Təbii Turizm</div>
+        <div class="hero-title">Salam, Şıxı!<br>Bu gün haraya getmək istərsiniz?</div>
+        <div class="hero-sub">Azərbaycanın ən gözəl aqro-turizm məkanlarını kəşf edin</div>
+        <button class="hero-cta" onclick="navigate('discover',null)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          İndi Kəşf Et
+        </button>
+      </div>
+
+      <!-- Coin bar -->
+      <div class="coin-bar">
+        <div class="coin-bar-icon">🪙</div>
+        <div>
+          <div class="coin-bar-label">Balansınız</div>
+          <div class="coin-bar-amount">480</div>
+        </div>
+        <button class="coin-bar-btn" onclick="navigate('coins',null)">Ətraflı →</button>
+      </div>
+
+      <!-- Quick access -->
+      <div class="quick-grid">
+        <div class="quick-card" onclick="navigate('discover',null)">
+          <div class="quick-emoji">🔍</div>
+          <div class="quick-label">Kəşf et</div>
+        </div>
+        <div class="quick-card" onclick="navigate('map',null)">
+          <div class="quick-emoji">🗺️</div>
+          <div class="quick-label">Xəritə</div>
+        </div>
+        <div class="quick-card" onclick="navigate('reservations',null)">
+          <div class="quick-emoji">📅</div>
+          <div class="quick-label">Bronlar</div>
+        </div>
+        <div class="quick-card" onclick="navigate('rewards',null)">
+          <div class="quick-emoji">🎁</div>
+          <div class="quick-label">Mükafat</div>
+        </div>
+      </div>
+
+      <!-- Popular places -->
+      <div class="section-title">
+        Populyar Məkanlar
+        <span class="see-all" onclick="navigate('discover',null)">Hamısı →</span>
+      </div>
+      <div class="place-grid-2">
+        <div class="place-card">
+          <div class="place-img" style="background:linear-gradient(135deg,#C6E6C3,#88C98A)">🍇</div>
+          <div class="place-body">
+            <div class="place-name">Üzüm Yığımı Festivalı</div>
+            <div class="place-loc">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Şamaxı
+            </div>
+            <div class="place-foot">
+              <div class="place-rating"><span>★</span> 4.8</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 45 koin</div>
+            </div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="place-img" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">🐝</div>
+          <div class="place-body">
+            <div class="place-name">Bal Dadımı Turu</div>
+            <div class="place-loc">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Qəbələ
+            </div>
+            <div class="place-foot">
+              <div class="place-rating"><span>★</span> 4.6</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 35 koin</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: KƏŞF ET ─── -->
+  <div id="page-discover" class="page">
+    <div class="page-wrap">
+      <div class="page-title">Kəşf Et</div>
+
+      <div class="discover-search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--text-light)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Tur, bölgə axtar...">
+      </div>
+
+      <div class="chips-row">
+        <div class="chip active" onclick="filterChip(this)">Hamısı</div>
+        <div class="chip" onclick="filterChip(this)">Ferma</div>
+        <div class="chip" onclick="filterChip(this)">Kamp</div>
+        <div class="chip" onclick="filterChip(this)">At Minmə</div>
+        <div class="chip" onclick="filterChip(this)">Arıcılıq</div>
+        <div class="chip" onclick="filterChip(this)">Bağ</div>
+      </div>
+
+      <div class="result-count">5 məkan tapıldı</div>
+
+      <div class="disc-grid">
+        <!-- Card 1 -->
+        <div class="disc-card">
+          <div class="disc-img" style="background:linear-gradient(135deg,#BBF7D0,#4ADE80)">
+            <div class="disc-tag" style="background:rgba(22,101,52,0.75)">FERMA</div>
+            <div class="disc-fav">🤍</div>
+            🍇
+          </div>
+          <div class="disc-body">
+            <div class="disc-name">Üzüm Yığımı Turu</div>
+            <div class="disc-loc">📍 Şamaxı</div>
+            <div class="disc-foot">
+              <div class="place-rating"><span>★</span> 4.8</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 45</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="disc-card">
+          <div class="disc-img" style="background:linear-gradient(135deg,#FEF3C7,#FCD34D)">
+            <div class="disc-tag" style="background:rgba(120,53,15,0.7)">ARICILIQ</div>
+            <div class="disc-fav">🤍</div>
+            🐝
+          </div>
+          <div class="disc-body">
+            <div class="disc-name">Bal Dadımı və Arıcılıq</div>
+            <div class="disc-loc">📍 Qəbələ</div>
+            <div class="disc-foot">
+              <div class="place-rating"><span>★</span> 4.6</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 35</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="disc-card">
+          <div class="disc-img" style="background:linear-gradient(135deg,#BFDBFE,#60A5FA)">
+            <div class="disc-tag" style="background:rgba(30,58,138,0.7)">KAMP</div>
+            <div class="disc-fav">🤍</div>
+            🏕️
+          </div>
+          <div class="disc-body">
+            <div class="disc-name">Dağ Kamp Gecəsi</div>
+            <div class="disc-loc">📍 Xınalıq</div>
+            <div class="disc-foot">
+              <div class="place-rating"><span>★</span> 4.9</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 60</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="disc-card">
+          <div class="disc-img" style="background:linear-gradient(135deg,#EDE9FE,#A78BFA)">
+            <div class="disc-tag" style="background:rgba(76,29,149,0.7)">AT MİNMƏ</div>
+            <div class="disc-fav">🤍</div>
+            🐎
+          </div>
+          <div class="disc-body">
+            <div class="disc-name">At Minmə Məktəbi</div>
+            <div class="disc-loc">📍 İsmayıllı</div>
+            <div class="disc-foot">
+              <div class="place-rating"><span>★</span> 4.7</div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 50</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 — full width horizontal -->
+        <div class="disc-card full">
+          <div class="disc-img" style="background:linear-gradient(135deg,#D1FAE5,#34D399);width:200px;flex-shrink:0">
+            <div class="disc-tag" style="background:rgba(6,78,59,0.75)">BAĞ</div>
+            <div class="disc-fav">❤️</div>
+            🌺
+          </div>
+          <div class="disc-body" style="display:flex;flex-direction:column;justify-content:center;padding:20px 18px">
+            <div class="disc-name" style="font-size:15px">Gül Bağı Turu — Qəbələ</div>
+            <div class="disc-loc" style="margin-bottom:12px">📍 Qəbələ • 3 saat</div>
+            <div style="font-size:12.5px;color:var(--text-mid);margin-bottom:14px;line-height:1.5">Qəbələnin məşhur gül bağlarında xüsusi rehbərli ekskursiya. 200+ növ çiçək, aromaterapiya seansı, ev gül yağı.</div>
+            <div class="disc-foot" style="align-items:center">
+              <div class="place-rating" style="font-size:13px"><span>★</span> 4.9 <span style="color:var(--text-light);font-size:11px;font-weight:400">(47)</span></div>
+              <div class="coin-pill"><div class="coin-circle">₼</div> 80</div>
+              <button class="btn btn-primary" style="margin-left:12px;padding:8px 16px">Bron Et</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: XƏRİTƏ ─── -->
+  <div id="page-map" class="page">
+    <div class="map-wrap">
+      <div class="map-bg"></div>
+
+      <!-- Simulated roads -->
+      <div class="map-road-h" style="top:38%;left:0;right:0;opacity:0.7"></div>
+      <div class="map-road-h" style="top:62%;left:10%;right:5%;opacity:0.5"></div>
+      <div class="map-road-v" style="left:45%;top:0;bottom:0;opacity:0.6"></div>
+      <div class="map-road-v" style="left:68%;top:20%;bottom:10%;opacity:0.45"></div>
+      <div class="map-road-h" style="top:22%;left:30%;right:20%;opacity:0.4;transform:rotate(-4deg)"></div>
+
+      <!-- Map pins -->
+      <div class="map-pin" style="left:42%;top:35%">
+        <div class="map-pin-badge">Üzüm Yığımı</div>
+        <div class="map-pin-dot" style="background:var(--green-accent)"></div>
+      </div>
+      <div class="map-pin" style="left:62%;top:25%">
+        <div class="map-pin-badge">Bal Dadımı</div>
+        <div class="map-pin-dot" style="background:var(--orange)"></div>
+      </div>
+      <div class="map-pin" style="left:72%;top:58%">
+        <div class="map-pin-badge">Dağ Kampı</div>
+        <div class="map-pin-dot" style="background:#3B82F6"></div>
+      </div>
+      <div class="map-pin" style="left:55%;top:65%">
+        <div class="map-pin-badge">At Minmə · 3</div>
+        <div class="map-pin-dot" style="background:#8B5CF6"></div>
+      </div>
+      <div class="map-pin" style="left:32%;top:52%">
+        <div class="map-pin-badge">Gül Bağı</div>
+        <div class="map-pin-dot" style="background:#EC4899"></div>
+      </div>
+      <div class="map-pin" style="left:80%;top:42%">
+        <div class="map-pin-dot" style="background:var(--green-accent)"></div>
+      </div>
+      <div class="map-pin" style="left:20%;top:30%">
+        <div class="map-pin-dot" style="background:var(--orange)"></div>
+      </div>
+
+      <!-- Overlay panel -->
+      <div class="map-overlay">
+        <div class="map-overlay-head">
+          <div class="map-overlay-title">
+            <h3>Turlar</h3>
+            <span class="map-count">5 məkan</span>
+          </div>
+          <div class="map-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--text-light)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Axtar...">
+          </div>
+          <div class="map-chips">
+            <div class="map-chip active">Tarix</div>
+            <div class="map-chip">Qiymət</div>
+            <div class="map-chip">Tur növü</div>
+            <div class="map-chip">TurAgent</div>
+          </div>
+        </div>
+
+        <div class="map-list">
+          <div class="map-item">
+            <div class="map-item-icon" style="background:rgba(61,171,114,0.12)">🍇</div>
+            <div class="map-item-info">
+              <div class="map-item-name">Üzüm Yığımı Turu</div>
+              <div class="map-item-meta">15 May · Şamaxı</div>
+            </div>
+            <div class="map-item-price">₼45</div>
+          </div>
+          <div class="map-item">
+            <div class="map-item-icon" style="background:rgba(245,158,11,0.12)">🐝</div>
+            <div class="map-item-info">
+              <div class="map-item-name">Bal Dadımı Turu</div>
+              <div class="map-item-meta">17 May · Qəbələ</div>
+            </div>
+            <div class="map-item-price">₼35</div>
+          </div>
+          <div class="map-item">
+            <div class="map-item-icon" style="background:rgba(59,130,246,0.12)">🏕️</div>
+            <div class="map-item-info">
+              <div class="map-item-name">Dağ Kamp Gecəsi</div>
+              <div class="map-item-meta">20 May · Xınalıq</div>
+            </div>
+            <div class="map-item-price">₼60</div>
+          </div>
+          <div class="map-item">
+            <div class="map-item-icon" style="background:rgba(139,92,246,0.12)">🐎</div>
+            <div class="map-item-info">
+              <div class="map-item-name">At Minmə Məktəbi</div>
+              <div class="map-item-meta">22 May · İsmayıllı</div>
+            </div>
+            <div class="map-item-price">₼50</div>
+          </div>
+          <div class="map-item">
+            <div class="map-item-icon" style="background:rgba(236,72,153,0.12)">🌺</div>
+            <div class="map-item-info">
+              <div class="map-item-name">Gül Bağı Turu</div>
+              <div class="map-item-meta">25 May · Qəbələ</div>
+            </div>
+            <div class="map-item-price">₼80</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: REZERVASİYALAR ─── -->
+  <div id="page-reservations" class="page">
+    <div class="page-wrap">
+      <div class="page-title">Rezervasiyalar</div>
+
+      <div class="tabs-row">
+        <button class="tab-btn active" onclick="switchTab(this,'tabs-res')">Aktiv (3)</button>
+        <button class="tab-btn" onclick="switchTab(this,'tabs-res')">Gözlənilir</button>
+        <button class="tab-btn" onclick="switchTab(this,'tabs-res')">Tamamlandı</button>
+      </div>
+
+      <!-- Card 1 -->
+      <div class="res-card">
+        <div class="res-emoji-box" style="background:linear-gradient(135deg,#BBF7D0,#4ADE80)">🍇</div>
+        <div class="res-info">
+          <div class="res-name">Üzüm Yığımı Turu</div>
+          <div class="res-meta">
+            <span>📅 15 May 2026</span>
+            <span>👥 3 nəfər</span>
+            <span>⏰ 10:00</span>
+          </div>
+          <div class="res-actions">
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px">Ətraflı</button>
+            <button class="btn btn-secondary" style="padding:7px 14px;font-size:12px">Ləğv et</button>
+            <span class="badge badge-green">AKTİV</span>
+          </div>
+        </div>
+        <div class="res-price">
+          <div class="price">₼135</div>
+          <div class="price-label">ödənildi</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="res-card">
+        <div class="res-emoji-box" style="background:linear-gradient(135deg,#FEF3C7,#FCD34D)">🐝</div>
+        <div class="res-info">
+          <div class="res-name">Bal Dadımı Turu</div>
+          <div class="res-meta">
+            <span>📅 17 May 2026</span>
+            <span>👥 2 nəfər</span>
+            <span>⏰ 14:00</span>
+          </div>
+          <div class="res-actions">
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px">Ətraflı</button>
+            <button class="btn btn-secondary" style="padding:7px 14px;font-size:12px">Ləğv et</button>
+            <span class="badge badge-orange">GÖZLƏNİLİR</span>
+          </div>
+        </div>
+        <div class="res-price">
+          <div class="price">₼60</div>
+          <div class="price-label">gözlənilir</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="res-card">
+        <div class="res-emoji-box" style="background:linear-gradient(135deg,#EDE9FE,#A78BFA)">🐎</div>
+        <div class="res-info">
+          <div class="res-name">At Minmə Məktəbi</div>
+          <div class="res-meta">
+            <span>📅 10 May 2026</span>
+            <span>👥 1 nəfər</span>
+            <span>⏰ 09:00</span>
+          </div>
+          <div class="res-actions">
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px">Ətraflı</button>
+            <span class="badge badge-gray">Tamamlandı</span>
+          </div>
+        </div>
+        <div class="res-price">
+          <div class="price">₼50</div>
+          <div class="price-label">tamamlandı</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: KOİNLƏR ─── -->
+  <div id="page-coins" class="page">
+    <div class="page-wrap">
+      <div class="page-title">Koinlər</div>
+
+      <div class="coins-hero">
+        <div class="coins-hero-icon">🪙</div>
+        <div>
+          <div class="coins-hero-amount">480</div>
+          <div class="coins-hero-label">Mövcud koin balansı • AgroFlow Rewards</div>
+        </div>
+      </div>
+
+      <div class="coins-stats">
+        <div class="coins-stat">
+          <div class="coins-stat-val" style="color:var(--green-tag)">+120</div>
+          <div class="coins-stat-label">Bu ay qazanıldı</div>
+        </div>
+        <div class="coins-stat">
+          <div class="coins-stat-val" style="color:var(--red)">−80</div>
+          <div class="coins-stat-label">Xərcləndi</div>
+        </div>
+        <div class="coins-stat">
+          <div class="coins-stat-val">3</div>
+          <div class="coins-stat-label">Tamamlanan Tur</div>
+        </div>
+      </div>
+
+      <div class="tx-list">
+        <div class="tx-header">Son Əməliyyatlar</div>
+        <div class="tx-item">
+          <div class="tx-icon earn">🍇</div>
+          <div class="tx-info">
+            <div class="tx-name">Üzüm Yığımı Turu tamamlandı</div>
+            <div class="tx-date">13 May 2026</div>
+          </div>
+          <div class="tx-amount earn">+50</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon earn">⭐</div>
+          <div class="tx-info">
+            <div class="tx-name">Rəy yazıldı</div>
+            <div class="tx-date">11 May 2026</div>
+          </div>
+          <div class="tx-amount earn">+30</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon spend">🎁</div>
+          <div class="tx-info">
+            <div class="tx-name">Endirim kuponu alındı</div>
+            <div class="tx-date">9 May 2026</div>
+          </div>
+          <div class="tx-amount spend">−80</div>
+        </div>
+        <div class="tx-item">
+          <div class="tx-icon earn">🐝</div>
+          <div class="tx-info">
+            <div class="tx-name">Bal Dadımı Turu tamamlandı</div>
+            <div class="tx-date">5 May 2026</div>
+          </div>
+          <div class="tx-amount earn">+50</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: MÜKAFATLAR ─── -->
+  <div id="page-rewards" class="page">
+    <div class="page-wrap">
+      <div class="page-title">Mükafatlar</div>
+      <div class="rewards-sub">Koinlərinizi xüsusi mükafatlara çevirin</div>
+
+      <div class="rewards-grid">
+        <div class="reward-card">
+          <div class="reward-img">🎟️</div>
+          <div class="reward-body">
+            <div class="reward-name">%15 Endirim Kuponu</div>
+            <div class="reward-desc">İstənilən tura 15% endirim qazanın</div>
+            <div class="reward-foot">
+              <div class="coin-pill"><div class="coin-circle">₼</div> 200 koin</div>
+              <button class="btn-claim can">Seç</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-img">🍽️</div>
+          <div class="reward-body">
+            <div class="reward-name">Pulsuz Kənd Naharı</div>
+            <div class="reward-desc">Seçilmiş fermalarda pulsuz ənənəvi nahar</div>
+            <div class="reward-foot">
+              <div class="coin-pill"><div class="coin-circle">₼</div> 350 koin</div>
+              <button class="btn-claim cant">Çatmır</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-img">🌿</div>
+          <div class="reward-body">
+            <div class="reward-name">Üzvi Məhsul Dəsti</div>
+            <div class="reward-desc">Yerli fermalardan 3 fərqli üzvi məhsul</div>
+            <div class="reward-foot">
+              <div class="coin-pill"><div class="coin-circle">₼</div> 150 koin</div>
+              <button class="btn-claim can">Seç</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="reward-card">
+          <div class="reward-img">🏕️</div>
+          <div class="reward-body">
+            <div class="reward-name">VIP Kamp Gecəsi</div>
+            <div class="reward-desc">Premium çadır, personallaşdırılmış xidmət</div>
+            <div class="reward-foot">
+              <div class="coin-pill"><div class="coin-circle">₼</div> 600 koin</div>
+              <button class="btn-claim cant">Çatmır</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: PROFİL ─── -->
+  <div id="page-profile" class="page">
+    <div class="page-wrap">
+      <div class="profile-hero">
+        <div class="profile-avatar">Ş</div>
+        <div>
+          <div class="profile-name">Şıxı İbrahimov</div>
+          <div class="profile-email">sixiibrahimov217@gmail.com</div>
+          <div class="profile-since">Üzv olma tarixi: Yanvar 2025</div>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="pstat">
+          <div class="pstat-val">7</div>
+          <div class="pstat-label">Tamamlanan Tur</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val" style="color:var(--orange)">480</div>
+          <div class="pstat-label">Koin Balansı</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val" style="color:var(--green-tag)">2</div>
+          <div class="pstat-label">Aktiv Bron</div>
+        </div>
+        <div class="pstat">
+          <div class="pstat-val">4.8</div>
+          <div class="pstat-label">Ort. Reytinq</div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-group-title">Hesab</div>
+        <div class="menu-item">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-mid)" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <span class="menu-label">Şəxsi Məlumatlar</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-mid)" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <span class="menu-label">Şifrə Dəyiş</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-mid)" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-.76a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 17z"/></svg></div>
+          <span class="menu-label">Əlaqə Nömrəsi</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-group-title">Digər</div>
+        <div class="menu-item">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-mid)" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></div>
+          <span class="menu-label">Bildirişlər</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green-mid)" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+          <span class="menu-label">Ayarlar</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item danger">
+          <div class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+          <span class="menu-label">Çıxış</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" class="menu-chevron"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function navigate(pageId, sidebarBtn) {
+  // hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // show target
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.classList.add('active');
+  // deactivate all sidebar nav items
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  // activate sidebar item
+  if (sidebarBtn) {
+    sidebarBtn.classList.add('active');
+  } else {
+    document.querySelectorAll('.nav-item').forEach(n => {
+      const attr = n.getAttribute('onclick') || '';
+      if (attr.includes("'" + pageId + "'")) n.classList.add('active');
+    });
+  }
+}
+
+function filterChip(el) {
+  el.closest('.chips-row').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchTab(el, group) {
+  el.closest('.tabs-row').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Map chip toggle
+document.querySelectorAll('.map-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    c.closest('.map-chips').querySelectorAll('.map-chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
