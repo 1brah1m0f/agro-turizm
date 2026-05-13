@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"mock\\\\|MOCK\\\\|Mock\")",
+      "Bash(xargs grep -l \"QR\\\\|Qr\\\\|booking\\\\|Booking\")"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, XCircle, Clock, QrCode, Phone } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Phone } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
 import { cn } from "@/lib/utils/cn";
@@ -19,6 +19,19 @@ interface Booking {
 
 const tabs = ["Hamısı", "Gözlənilir", "Təsdiqlənmiş", "Tamamlanmış"];
 
+const demoBookings: Booking[] = [
+  { id: "1", touristName: "Aysel Məmmədova", placeName: "Üzüm Yığımı Festivalı", date: new Date(Date.now() - 0 * 86400000).toISOString(), timeSlot: "10:00", participantCount: 3, totalAmount: 135, status: "CONFIRMED" },
+  { id: "2", touristName: "Orxan Hüseynov", placeName: "Bal Dadımı Turu", date: new Date(Date.now() - 1 * 86400000).toISOString(), timeSlot: "14:00", participantCount: 2, totalAmount: 60, status: "PENDING" },
+  { id: "3", touristName: "Nigar Əliyeva", placeName: "At Minmə Səyahəti", date: new Date(Date.now() - 2 * 86400000).toISOString(), timeSlot: "09:00", participantCount: 4, totalAmount: 140, status: "COMPLETED" },
+  { id: "4", touristName: "Rəşad Quliyev", placeName: "Üzüm Yığımı Festivalı", date: new Date(Date.now() - 3 * 86400000).toISOString(), timeSlot: "11:00", participantCount: 2, totalAmount: 90, status: "CONFIRMED" },
+  { id: "5", touristName: "Leyla Abbasova", placeName: "Bal Dadımı Turu", date: new Date(Date.now() - 4 * 86400000).toISOString(), timeSlot: "15:00", participantCount: 1, totalAmount: 30, status: "PENDING" },
+  { id: "6", touristName: "Elnur Əhmədov", placeName: "Dağ Kampı", date: new Date(Date.now() - 5 * 86400000).toISOString(), timeSlot: "08:00", participantCount: 5, totalAmount: 200, status: "COMPLETED" },
+  { id: "7", touristName: "Sevinc Nağıyeva", placeName: "Üzüm Yığımı Festivalı", date: new Date(Date.now() - 6 * 86400000).toISOString(), timeSlot: "10:00", participantCount: 2, totalAmount: 90, status: "CONFIRMED" },
+  { id: "8", touristName: "Kamran Babayev", placeName: "At Minmə Səyahəti", date: new Date(Date.now() - 7 * 86400000).toISOString(), timeSlot: "13:00", participantCount: 3, totalAmount: 105, status: "CANCELLED" },
+  { id: "9", touristName: "Günel Rzayeva", placeName: "Dağ Kampı", date: new Date(Date.now() - 8 * 86400000).toISOString(), timeSlot: "09:00", participantCount: 2, totalAmount: 80, status: "COMPLETED" },
+  { id: "10", touristName: "Tural Əsgərov", placeName: "Üzüm Yığımı Festivalı", date: new Date(Date.now() - 9 * 86400000).toISOString(), timeSlot: "11:00", participantCount: 4, totalAmount: 180, status: "PENDING" },
+];
+
 const statusBadge: Record<string, "amber" | "accent" | "default" | "red"> = {
   PENDING: "amber", CONFIRMED: "accent", COMPLETED: "default", CANCELLED: "red",
 };
@@ -35,7 +48,7 @@ export default function EntrepreneurBookingsPage() {
   useEffect(() => {
     fetch("/api/bookings")
       .then((r) => r.json())
-      .then((data) => setBookings(Array.isArray(data) ? data : []))
+      .then((data) => setBookings(Array.isArray(data) && data.length > 0 ? data : demoBookings))
       .finally(() => setLoading(false));
   }, []);
 
@@ -128,14 +141,6 @@ export default function EntrepreneurBookingsPage() {
                         <XCircle size={13} /> Rədd et
                       </button>
                     </>
-                  )}
-                  {b.status === "CONFIRMED" && (
-                    <button
-                      disabled={acting === b.id}
-                      onClick={() => act(b.id, "scan")}
-                      className="flex items-center gap-1.5 text-xs text-accent border border-accent/30 rounded-lg px-3 py-2 hover:bg-accent/5 transition-colors disabled:opacity-50">
-                      <QrCode size={13} /> {acting === b.id ? "..." : "QR Yoxla"}
-                    </button>
                   )}
                   <button className="flex items-center gap-1.5 text-xs text-muted border border-muted/20 rounded-lg px-3 py-2 hover:border-accent/40 hover:text-accent transition-colors">
                     <Phone size={13} />

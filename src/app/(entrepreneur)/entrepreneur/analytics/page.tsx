@@ -1,20 +1,21 @@
 import { TrendingUp, TrendingDown, Users, Star } from "lucide-react";
 
 const months = ["Yan", "Fev", "Mar", "Apr", "May", "İyn", "İyl", "Avq", "Sen", "Okt", "Noy", "Dek"];
-const revenueData = [120, 180, 150, 240, 200, 310, 280, 350, 290, 400, 840, 0];
-const bookingData = [3, 5, 4, 7, 6, 9, 8, 10, 8, 12, 12, 0];
+const revenueData = [210, 285, 340, 420, 390, 580, 640, 720, 510, 680, 940, 1120];
+const bookingData = [5, 7, 9, 11, 10, 16, 18, 20, 14, 19, 26, 31];
 
 const kpis = [
-  { label: "Aylıq Qazanc", value: "₼840", change: "+12%", up: true, icon: TrendingUp },
-  { label: "Bronlar", value: "12", change: "+3", up: true, icon: Users },
-  { label: "Orta Reytinq", value: "4.8", change: "+0.1", up: true, icon: Star },
-  { label: "Ləğv edilmə", value: "8%", change: "-2%", up: true, icon: TrendingDown },
+  { label: "Aylıq Qazanc", value: "₼1 120", change: "+19%", up: true, icon: TrendingUp },
+  { label: "Bronlar", value: "31", change: "+5", up: true, icon: Users },
+  { label: "Orta Reytinq", value: "4.8", change: "+0.2", up: true, icon: Star },
+  { label: "Ləğv edilmə", value: "6%", change: "-2%", up: true, icon: TrendingDown },
 ];
 
 const topActivities = [
-  { name: "Üzüm Yığımı", bookings: 7, revenue: 315, percent: 85 },
-  { name: "At Minmə", bookings: 3, revenue: 105, percent: 35 },
-  { name: "Bal Dadımı", bookings: 2, revenue: 30, percent: 20 },
+  { name: "Üzüm Yığımı Festivalı", bookings: 14, revenue: 630, percent: 100 },
+  { name: "At Minmə Səyahəti", bookings: 9, revenue: 315, percent: 64 },
+  { name: "Bal Dadımı Turu", bookings: 5, revenue: 150, percent: 36 },
+  { name: "Dağ Kampı", bookings: 3, revenue: 120, percent: 21 },
 ];
 
 export default function AnalyticsPage() {
@@ -45,7 +46,7 @@ export default function AnalyticsPage() {
           {revenueData.map((val, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full rounded-t-sm bg-accent/10 relative overflow-hidden"
-                style={{ height: `${maxRevenue > 0 ? (val / maxRevenue) * 100 : 0}%`, minHeight: val > 0 ? "4px" : 0 }}>
+                style={{ height: `${maxRevenue > 0 ? Math.max(4, Math.round((val / maxRevenue) * 152)) : 0}px` }}>
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-main rounded-t-sm" style={{ height: "70%" }} />
               </div>
             </div>
@@ -85,7 +86,7 @@ export default function AnalyticsPage() {
         <div className="flex items-end gap-1 h-28 mb-2">
           {bookingData.map((val, i) => (
             <div key={i} className="flex-1 rounded-t-sm bg-primary-dark/60 relative overflow-hidden"
-              style={{ height: `${Math.max(...bookingData) > 0 ? (val / Math.max(...bookingData)) * 100 : 0}%`, minHeight: val > 0 ? "4px" : 0 }}>
+              style={{ height: `${Math.max(...bookingData) > 0 ? Math.max(4, Math.round((val / Math.max(...bookingData)) * 104)) : 0}px` }}>
               <div className="absolute bottom-0 inset-x-0 bg-accent/60 rounded-t-sm" style={{ height: "60%" }} />
             </div>
           ))}
