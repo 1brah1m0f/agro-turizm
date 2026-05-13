@@ -43,6 +43,57 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Map marker animations ────────────────────────────── */
+.farm-marker {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.2s ease;
+  cursor: pointer;
+  transform-origin: bottom center;
+}
+.farm-marker:hover {
+  transform: translateY(-5px) scale(1.1);
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+}
+.farm-marker.selected {
+  transform: translateY(-7px) scale(1.14);
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+  animation: markerPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes markerPop {
+  0%   { transform: translateY(0)    scale(1);    }
+  45%  { transform: translateY(-14px) scale(1.22); }
+  100% { transform: translateY(-7px)  scale(1.14); }
+}
+
+/* Route info slide-up */
+@keyframes routeInfoSlide {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Location panel slide-up */
+@keyframes panelSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cluster badge */
+.cluster-badge {
+  background: #2D7A3A;
+  color: white;
+  border-radius: 50%;
+  border: 3px solid white;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.cluster-badge:hover { transform: scale(1.12); }
+
 @keyframes bakuPulse {
   0%, 100% { transform: scale(1); opacity: 0.6; }
   50% { transform: scale(2.2); opacity: 0; }
