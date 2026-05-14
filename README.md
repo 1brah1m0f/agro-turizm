@@ -1,59 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AgroFlow - Azəraycan Aqroturizm Platforması
 
-## Getting Started
+**Canlı sayt:** [farmorfx.vercel.app](https://farmorfx.vercel.app)
 
-## Backend (Hackathon Demo)
+Azərbaycanda aqroturizmi inkişaf etdirən platforma. Turistlər kənd yerlərindəki ferma, bağ və aqroturizm yerlərini tapır, bron edir. Sahibkarlar öz yerlərini əlavə edib idarə edir.
 
-### Environment
+---
 
-Create a `.env.local` with:
+## Necə işləyir
 
+**Tourist (Turist)**
+- Xəritədə yerləri tap
+- Fotolara, qiymətlərə, rəylərə bax
+- Bron et, QR kod al
+- Rəy yaz, coin qazan
+
+**Sahibkar (Entrepreneur)**
+- Qeydiyyatdan keç, biznesini təsdiqlət
+- Yerlər əlavə et (foto, qiymət, koordinat)
+- Bronları idarə et, analitikaya bax
+
+**Admin**
+- İstifadəçiləri, yərləri, rəyləri idarə et
+- Sahibkar təsdiqləmələrini icra et
+
+---
+
+## Texnologiyalar
+
+| Texnologiya | İstifadə |
+|---|---|
+| Next.js 16 | Full-stack framework |
+| React 19 | UI |
+| Tailwind CSS v4 | Dizayn |
+| Prisma v7 + PostgreSQL | Verilənlər bazası |
+| NextAuth v5 | Autentifikasiya |
+| Google Maps API | Xəritə |
+| Gemini AI | AI tövsiyələr |
+| Gemini AI | ChatBot |
+| Vercel | Hosting |
+
+---
+
+## Lokal İşə Salma
+
+### Tələblər
+- Node.js 20+
+- PostgreSQL verilənlər bazası (məs. [Neon](https://neon.tech))
+
+### Addımlar
+
+```bash
+# 1. Asılılıqları yüklə
+npm install
+
+# 2. Mühit dəyişənlərini qur
+cp .env.local.example .env.local
+# .env.local faylını doldur (aşağıya bax)
+
+# 3. Verilənlər bazasını hazırla
+npx prisma db push
+npm run seed
+
+# 4. Serveri işə sal
+npm run dev
 ```
+
+Brauzer: [http://localhost:3000](http://localhost:3000)
+
+### `.env.local` nümunəsi
+
+```env
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB?pgbouncer=true&connection_limit=1
-NEXTAUTH_SECRET=your-secret
+NEXTAUTH_SECRET=gizli-acarin-bura-yaz
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-### Prisma
+---
 
-Prisma v7 reads `DATABASE_URL` from `.env.local` via `prisma.config.ts`.
+## Layihə Strukturu
 
 ```
-npx prisma db push
-npx prisma db seed
+src/
+├── app/
+│   ├── (tourist)/      # Turist səhifələri
+│   ├── (entrepreneur)/ # Sahibkar paneli
+│   ├── (admin)/        # Admin paneli
+│   ├── (auth)/         # Giriş / Qeydiyyat
+│   └── api/            # API endpointlər
+├── components/         # UI komponentlər
+├── lib/                # Prisma, auth, utils
+└── store/              # Zustand state
 ```
 
-### Run Dev Server
+---
 
-First, run the development server:
+## İstifadəçi Rolları
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+| Rol | Giriş |
+|---|---|
+| Tourist | Qeydiyyat zamanı default |
+| Entrepreneur | Qeydiyyat + admin təsdiqi |
+| Admin | Manual təyin edilir |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Töhfə
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Fork et
+2. Branch aç: `git checkout -b feature/adi`
+3. Commit et: `git commit -m "feat: ..."`
+4. PR aç
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Lisenziya
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
