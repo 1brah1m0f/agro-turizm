@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Coins, TrendingUp, TrendingDown, Leaf, Navigation, Star } from "lucide-react";
+import { Coins, TrendingUp, TrendingDown, CreditCard, ReceiptText, Percent } from "lucide-react";
 
 const howToEarn = [
-  { icon: Leaf,       label: "Aktivlik tamamla",     coins: "+50" },
-  { icon: Navigation, label: "Yeni fermaya get",      coins: "+150" },
-  { icon: Star,       label: "Rəy yaz",               coins: "+30" },
-  { icon: Coins,      label: "Gündəlik giriş",        coins: "+10" },
+  { icon: Percent,    label: "Hər ödənişdən qaytarım", coins: "10%" },
+  { icon: CreditCard, label: "50 AZN ödəniş nümunəsi", coins: "+5" },
+  { icon: ReceiptText, label: "100 AZN ödəniş nümunəsi", coins: "+10" },
+  { icon: Coins,      label: "Koinləri mükafata dəyiş", coins: "10+" },
 ];
 
 interface Transaction {
@@ -95,7 +95,7 @@ export default function CoinsPage() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[#1E1E1E] font-semibold text-sm">Koinlərinizi xərclə!</p>
-          <p className="text-[#6B7280] text-xs">Şəki halvası, ipək şərfə, at minmə dərsi...</p>
+          <p className="text-[#6B7280] text-xs">CoffeeBear, Entrée Baku, BigChefs və tədbir partnyorları.</p>
         </div>
         <button
           onClick={() => router.push("/rewards")}

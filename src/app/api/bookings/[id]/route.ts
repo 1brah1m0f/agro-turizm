@@ -41,10 +41,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return Response.json(updated);
     }
     if (action === "scan") {
+      const earnedCoins = Math.max(1, Math.round(booking.totalAmount * 0.1));
       const [updated, profileUpdate] = await prisma.$transaction([
         prisma.booking.update({ where: { id }, data: { status: "COMPLETED" } }),
-        prisma.touristProfile.update({ where: { userId: booking.userId }, data: { coinBalance: { increment: 50 } } }),
-        prisma.coinTransaction.create({ data: { userId: booking.userId, amount: 50, reason: "Yer ziyarəti tamamlandı" } }),
+        prisma.touristProfile.update({ where: { userId: booking.userId }, data: { coinBalance: { increment: earnedCoins } } }),
+        prisma.coinTransaction.create({ data: { userId: booking.userId, amount: earnedCoins, reason: "Ödənişin 10% koin qaytarımı" } }),
       ]);
       return Response.json({ booking: updated, coinBalance: profileUpdate.coinBalance });
     }

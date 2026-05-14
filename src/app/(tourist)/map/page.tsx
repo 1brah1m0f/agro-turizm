@@ -11,6 +11,7 @@ import { TOURS, type Tour } from "@/components/map/tours";
 import { type Location } from "@/components/map/locations";
 import TourListPanel from "@/components/map/TourListPanel";
 import TourDetailPanel from "@/components/map/TourDetailPanel";
+import ChatWidget from "@/components/chat/ChatWidget";
 import { cn } from "@/lib/utils/cn";
 
 const GoogleAzerbaijanMap = dynamic(
@@ -354,6 +355,8 @@ export default function MapPage() {
           onLocationSelect={handleLocationSelect}
         />
       </div>
+
+      <ChatWidget />
     </div>
   );
 }

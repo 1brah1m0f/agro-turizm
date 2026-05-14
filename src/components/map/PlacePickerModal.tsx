@@ -79,8 +79,7 @@ export default function PlacePickerModal({ open, onClose, onSelect, apiKey, init
                 onClick={(e) => {
                   const latLng = e.detail.latLng;
                   if (!latLng) return;
-                  const lat = typeof latLng.lat === "function" ? latLng.lat() : latLng.lat;
-                  const lng = typeof latLng.lng === "function" ? latLng.lng() : latLng.lng;
+                  const { lat, lng } = latLng;
                   setPosition({ lat, lng });
                   void reverseGeocode(lat, lng);
                 }}

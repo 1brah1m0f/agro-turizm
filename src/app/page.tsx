@@ -9,6 +9,7 @@ import HowToEarnCoins from "@/components/landing/HowToEarnCoins";
 import AboutUs from "@/components/landing/AboutUs";
 import ForEntrepreneurs from "@/components/landing/ForEntrepreneurs";
 import CTABanner from "@/components/landing/CTABanner";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 export default function LandingPage() {
   return (
@@ -40,6 +41,7 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+      <ChatWidget />
     </div>
   );
 }

@@ -1,11 +1,11 @@
-import { Apple, Smartphone, Navigation, ChevronDown } from "lucide-react";
+import { CreditCard, Gift, Percent, ChevronDown } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import PhoneMockup from "./PhoneMockup";
 
 const rewards = [
-  { icon: Apple, label: "Meyvə yığım aktivliyini tamamla", coins: "+50 KOİN" },
-  { icon: Smartphone, label: "QR kodunu tərəfdaş yerdə oxut", coins: "+80 KOİN" },
-  { icon: Navigation, label: "Yeni fermada gəzinti et", coins: "+150 KOİN" },
+  { icon: Percent, label: "Hər ödənişin 10%-i koin kimi qayıdır", coins: "10%" },
+  { icon: CreditCard, label: "50 AZN ödəniş etdikdə balansınıza 5 koin əlavə olunur", coins: "+5 KOİN" },
+  { icon: Gift, label: "Koinləri real kafe, restoran və tədbir partnyorlarında istifadə et", coins: "10+ KOİN" },
 ];
 
 export default function HowToEarnCoins() {
@@ -16,7 +16,7 @@ export default function HowToEarnCoins() {
           <Badge variant="accent" className="mb-4">KOİN SİSTEMİ</Badge>
           <h2 className="font-serif text-3xl lg:text-4xl font-bold text-text-dark mb-4">Necə Koin Qazanmalı?</h2>
           <p className="text-muted text-base leading-relaxed mb-8">
-            FarMorfX-də kəşfiyyatın hər anı dəyərlidir. Aktiv iştirak et, koin yığ və onları xüsusi mükafatlar üçün istifadə et.
+            FarMorfX-də ödəniş etdikcə balansınız böyüyür. Qazandığınız koinləri Azərbaycan üzrə seçilmiş partnyor endirimlərinə dəyişə bilərsiniz.
           </p>
           <div className="space-y-3 mb-6">
             {rewards.map(({ icon: Icon, label, coins }) => (
@@ -30,7 +30,7 @@ export default function HowToEarnCoins() {
             ))}
           </div>
           <button className="flex items-center gap-2 text-accent text-sm font-semibold hover:underline">
-            Koinləri nə ilə dəyişmək olar? <ChevronDown size={16} />
+            Koinləri hansı partnyorlarda istifadə etmək olar? <ChevronDown size={16} />
           </button>
         </div>
         <PhoneMockup />
