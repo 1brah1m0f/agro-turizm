@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { ArrowLeft, MapPin, Plus, Upload, X } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
 import Select from "@/components/ui/Select";
-import PlacePickerModal, { type PlacePick } from "@/components/map/PlacePickerModal";
+import { type PlacePick } from "@/components/map/PlacePickerModal";
+
+const PlacePickerModal = dynamic(() => import("@/components/map/PlacePickerModal"), { ssr: false });
 
 const AMENITIES = ["WiFi", "Parkinq", "Tualet", "Su", "Barbekü", "Uşaq üçün", "Qalaq", "Heyvanlar"];
 
@@ -21,19 +24,16 @@ export default function NewPlacePage() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
 
-  const apiKey = (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "").trim();
-
   const geocodeAddress = async (addr: string) => {
-    if (!apiKey) return null;
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addr)}&key=${apiKey}`;
-    const res = await fetch(url);
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(addr)}`;
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
     const data = await res.json();
-    const result = data?.results?.[0];
-    if (!result?.geometry?.location) return null;
+    const result = data?.[0];
+    if (!result) return null;
     return {
-      address: result.formatted_address as string,
-      lat: result.geometry.location.lat as number,
-      lng: result.geometry.location.lng as number,
+      address: result.display_name as string,
+      lat: parseFloat(result.lat),
+      lng: parseFloat(result.lon),
     };
   };
 
@@ -261,7 +261,6 @@ export default function NewPlacePage() {
       <PlacePickerModal
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        apiKey={apiKey}
         initial={picked}
         onSelect={(pick) => {
           setPicked(pick);

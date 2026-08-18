@@ -14,8 +14,8 @@ import TourDetailPanel from "@/components/map/TourDetailPanel";
 import ChatWidget from "@/components/chat/ChatWidget";
 import { cn } from "@/lib/utils/cn";
 
-const GoogleAzerbaijanMap = dynamic(
-  () => import("@/components/map/GoogleAzerbaijanMap"),
+const AzerbaijanMap = dynamic(
+  () => import("@/components/map/AzerbaijanMap"),
   {
     ssr: false,
     loading: () => (
@@ -191,8 +191,11 @@ export default function MapPage() {
       {/* ── MAP AREA ── */}
       <div className="flex-1 relative overflow-hidden">
 
-        {/* Top-right: quick nav + filter */}
-        <div className="absolute top-4 right-4 z-[600] flex items-center gap-2.5">
+        {/* Top-right: quick nav + filter (slides left when the location panel opens) */}
+        <div
+          className="absolute top-4 z-[600] flex items-center gap-2.5 transition-[right] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{ right: selectedLocation && !selectedTour ? "calc(1rem + min(400px, 100vw))" : "1rem" }}
+        >
           {/* Map tab pill */}
           <div
             className="flex items-center gap-1 px-2 py-1.5 rounded-[16px]"
@@ -261,8 +264,9 @@ export default function MapPage() {
         {/* Filter panel */}
         {filterOpen && (
           <div
-            className="absolute top-[60px] right-4 z-[600] w-72 rounded-[24px] p-5"
+            className="absolute top-[60px] z-[600] w-72 rounded-[24px] p-5 transition-[right] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
             style={{
+              right: selectedLocation && !selectedTour ? "calc(1rem + min(400px, 100vw))" : "1rem",
               background: "rgba(255,255,255,0.96)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
@@ -346,8 +350,8 @@ export default function MapPage() {
           <span>məkan</span>
         </div>
 
-        {/* Google Maps */}
-        <GoogleAzerbaijanMap
+        {/* Leaflet / OpenStreetMap */}
+        <AzerbaijanMap
           locations={allLocations}
           activeTypes={activeTypes}
           selectedTour={selectedTour}

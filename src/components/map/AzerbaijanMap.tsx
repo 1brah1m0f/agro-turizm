@@ -6,37 +6,37 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import {
   MapPin, X, Clock, Phone, ShoppingBag, Zap, ChevronRight,
   ChevronLeft, ChevronRight as ChevRight, ImageOff,
-  Star, Calendar, Users, Navigation2,
+  Star, Calendar, Users, Navigation2, LocateFixed,
 } from "lucide-react";
-import { LOCATIONS, TYPE_META, type Location, type LocationType } from "./locations";
+import { TYPE_META, type Location, type LocationType } from "./locations";
 import { type Tour } from "./tours";
 import { cn } from "@/lib/utils/cn";
 
 const TILE_URL    = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>';
 const BAKU: L.LatLngExpression = [40.409, 49.867];
+const OSRM_URL = "https://router.project-osrm.org/route/v1/driving";
 
-// ── Baku-to-destination route waypoints ───────────────────────────
-function getBakuRoute(destLat: number, destLng: number): L.LatLngExpression[] {
-  const start: L.LatLngExpression = BAKU;
-  if (destLat < 39.8) {
-    // South – Lankaran/Neftcala
-    return [start, [40.2, 49.55], [39.97, 49.1], [39.7, 49.0], [39.5, 48.9], [destLat, destLng]];
-  } else if (destLng < 46.5) {
-    // Far west – Gazakh, Goygol
-    return [start, [40.44, 49.35], [40.56, 48.4], [40.65, 47.5], [40.7, 46.8], [destLat, destLng]];
-  } else if (destLat > 41.3) {
-    // Far north – Quba, Khachmaz
-    return [start, [40.6, 49.65], [41.0, 49.1], [41.3, 49.0], [destLat, destLng]];
-  } else if (destLng < 47.4) {
-    // Northwest – Sheki, Zaqatala, Balakan
-    return [start, [40.44, 49.35], [40.56, 48.4], [40.68, 47.8], [40.85, 47.3], [destLat, destLng]];
-  } else if (destLng < 48.2) {
-    // West-central – Gabala, Oguz
-    return [start, [40.44, 49.35], [40.56, 48.4], [40.65, 48.0], [destLat, destLng]];
-  } else {
-    // Central – Shamakhi, Ismayilli, etc.
-    return [start, [40.44, 49.35], [40.52, 49.0], [40.55, 48.55], [destLat, destLng]];
+// ── Real road route between two points via OSRM (falls back to straight line) ──
+async function fetchRoadRoute(
+  from: { lat: number; lng: number },
+  to: { lat: number; lng: number },
+): Promise<{ coords: L.LatLngExpression[]; distanceKm: number }> {
+  try {
+    const url = `${OSRM_URL}/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("osrm request failed");
+    const data = await res.json();
+    const route = data?.routes?.[0];
+    if (!route) throw new Error("no route");
+    const coords: L.LatLngExpression[] = route.geometry.coordinates.map(
+      ([lng, lat]: [number, number]) => [lat, lng],
+    );
+    return { coords, distanceKm: Math.round(route.distance / 1000) };
+  } catch {
+    const coords: L.LatLngExpression[] = [[from.lat, from.lng], [to.lat, to.lng]];
+    const distanceKm = Math.round(L.latLng(from.lat, from.lng).distanceTo(L.latLng(to.lat, to.lng)) / 1000);
+    return { coords, distanceKm };
   }
 }
 
@@ -113,55 +113,117 @@ function makeIcon(loc: { emoji: string; color: string }, selected: boolean) {
 
 // ── Main component ─────────────────────────────────────────────────
 interface Props {
+  locations: Location[];
   activeTypes: LocationType[];
-  selectedTour?: Tour | null;
+  selectedTour: Tour | null;
+  selectedLocation: Location | null;
+  onLocationSelect: (loc: Location | null) => void;
 }
 
-export default function AzerbaijanMap({ activeTypes, selectedTour }: Props) {
+export default function AzerbaijanMap({ locations, activeTypes, selectedTour, selectedLocation, onLocationSelect }: Props) {
   const mapRef         = useRef<HTMLDivElement>(null);
   const mapInstance    = useRef<L.Map | null>(null);
   const markersRef     = useRef<Map<string, L.Marker>>(new Map());
   const tourLayersRef  = useRef<L.Layer[]>([]);
   const bakuLayersRef  = useRef<L.Layer[]>([]);
-  const [selected, setSelected] = useState<Location | null>(null);
-  const [hovered,  setHovered]  = useState<string | null>(null);
+  const userMarkerRef  = useRef<L.Marker | L.CircleMarker | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState<string | null>(null);
+  const selected = selectedLocation;
 
-  // ── Init map ──────────────────────────────────────────────────────
+  // ── Find my location ────────────────────────────────────────────
+  const locateMe = useCallback(() => {
+    if (!navigator.geolocation) {
+      setLocateError("Brauzer geolokasiyanı dəstəkləmir");
+      return;
+    }
+    setLocating(true);
+    setLocateError(null);
+
+    const onSuccess = (pos: GeolocationPosition) => {
+      const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      setUserLoc(loc);
+      setLocating(false);
+      setLocateError(null);
+      const map = mapInstance.current;
+      if (map) map.flyTo([loc.lat, loc.lng], 13, { duration: 0.9 });
+    };
+
+    const onFail = (err: GeolocationPositionError) => {
+      // High-accuracy GPS can fail/timeout indoors or on desktops without GPS —
+      // retry once with coarse (network/IP) location before giving up.
+      navigator.geolocation.getCurrentPosition(
+        onSuccess,
+        (err2) => {
+          setLocating(false);
+          const code = err2.code ?? err.code;
+          if (code === 1) setLocateError("Məkana icazə verilmədi. Brauzer ayarlarından bu sayt üçün icazə verin.");
+          else if (code === 3) setLocateError("Məkan tapılması vaxtı bitdi. Yenidən cəhd edin.");
+          else setLocateError("Məkan müəyyən edilə bilmədi. Cihazınızda məkan xidməti aktivdir?");
+        },
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 },
+      );
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      onFail,
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
+    );
+  }, []);
+
+  // ── Draw / update user location marker ──────────────────────────
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map) return;
+    if (userMarkerRef.current) { userMarkerRef.current.remove(); userMarkerRef.current = null; }
+    if (!userLoc) return;
+    const icon = L.divIcon({
+      html: `
+        <div style="position:relative;width:22px;height:22px;">
+          <div style="position:absolute;inset:0;border-radius:50%;background:#2563EB;opacity:0.3;animation:bakuPulse 1.8s ease-in-out infinite;"></div>
+          <div style="position:absolute;inset:5px;border-radius:50%;background:#2563EB;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>
+        </div>`,
+      className: "",
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+    });
+    userMarkerRef.current = L.marker([userLoc.lat, userLoc.lng], { icon, zIndexOffset: 900 }).addTo(map);
+  }, [userLoc]);
+
+  // ── Init map (basemap only, once) ──────────────────────────────────
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
     const map = L.map(mapRef.current, { center: [40.4, 47.5], zoom: 7, zoomControl: false, attributionControl: true });
     L.control.zoom({ position: "bottomright" }).addTo(map);
     L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, subdomains: "abc", maxZoom: 19 }).addTo(map);
-    LOCATIONS.forEach((loc) => {
-      const marker = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc, false) })
+    mapInstance.current = map;
+    return () => { map.remove(); mapInstance.current = null; markersRef.current.clear(); };
+  }, []);
+
+  // ── Location markers (rebuilt on data / filter / selection change) ──
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map) return;
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current.clear();
+    if (selectedTour) return;
+
+    locations.filter((loc) => activeTypes.includes(loc.type)).forEach((loc) => {
+      const isSel = selectedLocation?.id === loc.id;
+      const marker = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc, isSel), zIndexOffset: isSel ? 1000 : 0 })
         .addTo(map)
         .on("click", () => {
-          setSelected(loc);
+          onLocationSelect(loc);
           map.flyTo([loc.lat, loc.lng], Math.max(map.getZoom(), 11), { duration: 0.75 });
-          markersRef.current.forEach((m, id) => { const l = LOCATIONS.find((x) => x.id === id); if (l) m.setIcon(makeIcon(l, id === loc.id)); });
         })
         .on("mouseover", () => setHovered(loc.id))
         .on("mouseout", () => setHovered(null));
       markersRef.current.set(loc.id, marker);
     });
-    mapInstance.current = map;
-    return () => { map.remove(); mapInstance.current = null; markersRef.current.clear(); };
-  }, []);
-
-  // ── Category filter ───────────────────────────────────────────────
-  useEffect(() => {
-    if (!mapInstance.current) return;
-    markersRef.current.forEach((marker, id) => {
-      const loc = LOCATIONS.find((l) => l.id === id);
-      if (!loc) return;
-      if (activeTypes.includes(loc.type)) {
-        if (!mapInstance.current!.hasLayer(marker)) marker.addTo(mapInstance.current!);
-      } else {
-        if (mapInstance.current!.hasLayer(marker)) marker.remove();
-        if (selected?.id === id) setSelected(null);
-      }
-    });
-  }, [activeTypes, selected]);
+  }, [locations, activeTypes, selectedTour, selectedLocation, onLocationSelect]);
 
   // ── Tour route with photo stop cards ─────────────────────────────
   useEffect(() => {
@@ -173,9 +235,9 @@ export default function AzerbaijanMap({ activeTypes, selectedTour }: Props) {
     tourLayersRef.current = [];
 
     if (!selectedTour) return;
-    setSelected(null);
+    onLocationSelect(null);
 
-    const stops = selectedTour.stopIds.map((id) => LOCATIONS.find((l) => l.id === id)).filter(Boolean) as typeof LOCATIONS;
+    const stops = selectedTour.stopIds.map((id) => locations.find((l) => l.id === id)).filter(Boolean) as typeof locations;
     if (stops.length < 1) return;
     const coords: L.LatLngExpression[] = stops.map((s) => [s.lat, s.lng]);
 
@@ -248,91 +310,109 @@ export default function AzerbaijanMap({ activeTypes, selectedTour }: Props) {
       const bounds = L.latLngBounds(coords);
       map.fitBounds(bounds, { padding: [80, 280] });
     }
-  }, [selectedTour]);
+  }, [selectedTour, locations, onLocationSelect]);
 
-  // ── Baku → location route ─────────────────────────────────────────
+  // ── Origin → location road route (real roads via OSRM) ─────────────
   useEffect(() => {
     if (!mapInstance.current) return;
     const map = mapInstance.current;
 
-    // Clear previous baku route
+    // Clear previous route
     bakuLayersRef.current.forEach((l) => l.remove());
     bakuLayersRef.current = [];
 
     if (!selected || selectedTour) return;
 
-    const waypoints = getBakuRoute(selected.lat, selected.lng);
+    const origin = userLoc ?? { lat: (BAKU as [number, number])[0], lng: (BAKU as [number, number])[1] };
+    const originLabel = userLoc ? "Mən" : "Bakı";
+    let cancelled = false;
 
-    // Purple route line
-    const routeLine = L.polyline(waypoints, {
-      color: "#7C3AED",
-      weight: 4.5,
-      opacity: 0.85,
-    }).addTo(map);
-    bakuLayersRef.current.push(routeLine);
+    fetchRoadRoute(origin, { lat: selected.lat, lng: selected.lng }).then(({ coords, distanceKm }) => {
+      if (cancelled || !mapInstance.current) return;
 
-    // Animate draw
-    setTimeout(() => {
-      const el = routeLine.getElement() as SVGPathElement | null;
-      if (el) {
-        const firstPath = el.tagName === "path" ? el : el.querySelector("path");
-        if (firstPath) {
-          const len = firstPath.getTotalLength ? firstPath.getTotalLength() : 800;
-          firstPath.style.strokeDasharray = `${len}`;
-          firstPath.style.strokeDashoffset = `${len}`;
-          firstPath.style.animation = "drawRoute 1.6s cubic-bezier(0.4,0,0.2,1) forwards";
+      // Purple route line following real roads
+      const routeLine = L.polyline(coords, {
+        color: "#7C3AED",
+        weight: 4.5,
+        opacity: 0.85,
+      }).addTo(map);
+      bakuLayersRef.current.push(routeLine);
+
+      // Animate draw
+      setTimeout(() => {
+        const el = routeLine.getElement() as SVGPathElement | null;
+        if (el) {
+          const firstPath = el.tagName === "path" ? el : el.querySelector("path");
+          if (firstPath) {
+            const len = firstPath.getTotalLength ? firstPath.getTotalLength() : 800;
+            firstPath.style.strokeDasharray = `${len}`;
+            firstPath.style.strokeDashoffset = `${len}`;
+            firstPath.style.animation = "drawRoute 1.6s cubic-bezier(0.4,0,0.2,1) forwards";
+          }
         }
-      }
-    }, 80);
+      }, 80);
 
-    // Baku marker with pulse
-    const bakuIcon = L.divIcon({
-      html: `
-        <div style="position:relative;width:24px;height:24px;">
-          <div style="position:absolute;inset:0;border-radius:50%;background:#F97316;opacity:0.35;animation:bakuPulse 1.8s ease-in-out infinite;"></div>
-          <div style="position:absolute;inset:4px;border-radius:50%;background:#F97316;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>
-          <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:#F97316;color:white;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.2);">Bakı</div>
-        </div>`,
-      className: "",
-      iconSize: [24, 24],
-      iconAnchor: [12, 12],
+      // Origin marker with pulse
+      const originIcon = L.divIcon({
+        html: `
+          <div style="position:relative;width:24px;height:24px;">
+            <div style="position:absolute;inset:0;border-radius:50%;background:#F97316;opacity:0.35;animation:bakuPulse 1.8s ease-in-out infinite;"></div>
+            <div style="position:absolute;inset:4px;border-radius:50%;background:#F97316;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>
+            <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:#F97316;color:white;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.2);">${originLabel}</div>
+          </div>`,
+        className: "",
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+      const originMarker = L.marker([origin.lat, origin.lng], { icon: originIcon }).addTo(map);
+      bakuLayersRef.current.push(originMarker);
+
+      // Distance estimate badge popup at midpoint
+      const mid = coords[Math.floor(coords.length / 2)] as [number, number];
+      const distPopup = L.popup({
+        closeButton: false,
+        className: "baku-popup",
+        autoPan: false,
+      })
+        .setLatLng(mid)
+        .setContent(`<div style="background:#7C3AED;color:white;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;">${originLabel === "Mən" ? "Məndən" : "Bakıdan"} ~${distanceKm} km</div>`)
+        .addTo(map);
+      bakuLayersRef.current.push(distPopup);
+
+      // Fit to route
+      const bounds = L.latLngBounds(coords);
+      map.fitBounds(bounds, { padding: [60, 60] });
     });
-    const bakuMarker = L.marker(BAKU, { icon: bakuIcon }).addTo(map);
-    bakuLayersRef.current.push(bakuMarker);
 
-    // Distance estimate badge popup at midpoint
-    const mid = waypoints[Math.floor(waypoints.length / 2)] as [number, number];
-    const destCoord = waypoints[waypoints.length - 1] as [number, number];
-    const distKm = Math.round(
-      L.latLng(BAKU as [number, number]).distanceTo(L.latLng(destCoord)) / 1000
-    );
-    const distPopup = L.popup({
-      closeButton: false,
-      className: "baku-popup",
-      autoPan: false,
-    })
-      .setLatLng(mid)
-      .setContent(`<div style="background:#7C3AED;color:white;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;">Bakıdan ~${distKm} km</div>`)
-      .addTo(map);
-    bakuLayersRef.current.push(distPopup);
+    return () => { cancelled = true; };
+  }, [selected, selectedTour, userLoc]);
 
-    // Fit to route
-    const bounds = L.latLngBounds(waypoints);
-    map.fitBounds(bounds, { padding: [60, 60] });
-  }, [selected, selectedTour]);
-
-  const closePanel = () => {
-    setSelected(null);
-    markersRef.current.forEach((m, id) => { const l = LOCATIONS.find((x) => x.id === id); if (l) m.setIcon(makeIcon(l, false)); });
-  };
+  const closePanel = () => onLocationSelect(null);
 
   return (
     <div className="relative w-full h-full">
       <div ref={mapRef} className="w-full h-full" />
 
+      {/* GPS locate button */}
+      <div className="absolute bottom-6 left-4 z-[500] flex flex-col items-start gap-1.5">
+        <button
+          onClick={locateMe}
+          disabled={locating}
+          title="Mənim məkanımı tap"
+          className="w-11 h-11 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-[#1F6B4F] hover:bg-gray-50 transition-colors disabled:opacity-60"
+        >
+          <LocateFixed size={19} className={locating ? "animate-pulse" : ""} />
+        </button>
+        {locateError && (
+          <div className="bg-white border border-red-200 text-red-600 text-[11px] rounded-lg px-2.5 py-1.5 shadow-md max-w-[200px]">
+            {locateError}
+          </div>
+        )}
+      </div>
+
       {/* Hover tooltip */}
       {hovered && !selected && !selectedTour && (() => {
-        const loc = LOCATIONS.find((l) => l.id === hovered);
+        const loc = locations.find((l) => l.id === hovered);
         if (!loc) return null;
         return (
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[500] pointer-events-none">
@@ -349,7 +429,7 @@ export default function AzerbaijanMap({ activeTypes, selectedTour }: Props) {
 
       {/* ── TOUR BOTTOM PANEL ── */}
       {selectedTour && (() => {
-        const stops = selectedTour.stopIds.map((id) => LOCATIONS.find((l) => l.id === id)).filter(Boolean) as typeof LOCATIONS;
+        const stops = selectedTour.stopIds.map((id) => locations.find((l) => l.id === id)).filter(Boolean) as typeof locations;
         const routeLabel = stops.map((s) => s.region).join(" · ");
         return (
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[600] w-[420px] bg-white rounded-2xl shadow-2xl border border-gray-100">
