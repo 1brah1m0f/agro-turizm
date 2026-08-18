@@ -31,7 +31,8 @@ export async function POST(req: Request) {
       });
     }
     return Response.json(user, { status: 201 });
-  } catch {
+  } catch (err) {
+    console.error("register error:", err);
     return Response.json({ error: "Server xətası" }, { status: 500 });
   }
 }
